@@ -4,7 +4,7 @@
 
 - Java
 
-### Integrantes:
+### Integrante:
 
 - Maria Laura Rangel Urbano Cronemberger
 
