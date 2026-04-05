@@ -49,5 +49,38 @@ public class Scanner {
     public Scanner(String code) {
         this.code = code;
     }
+
+    private Token readNumber() {
+        int start = current;
+        
+        while (Character.isDigit(peek())) {
+            advance();
+        }
+        
+        String lexeme = code.substring(start, current);  
+        return new Token(TokenType.INTEGER_CONSTANT, lexeme, line);
+    }
+
+
+    public List<Token> tokenize() {
+    while (current < code.length()) {
+        skipWhitespace();
+        if (current >= code.length()) break;
+
+        char c = peek();
+
+        if (Character.isDigit(c)) {
+            tokens.add(readNumber());
+        } else {
+            advance(); // ignora o resto por enquanto
+        }
+    }
+
+    tokens.add(new Token(TokenType.EOF, "", line));
+
+    return tokens;
+    }
+
+
 }
 
