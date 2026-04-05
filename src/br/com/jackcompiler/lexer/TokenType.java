@@ -1,5 +1,11 @@
 package br.com.jackcompiler.lexer;
 
-public class TokenType {
-    
+public enum TokenType {
+    KEYWORD,
+    SYMBOL,
+    IDENTIFIER,
+    INTEGER_CONSTANT,
+    STRING_CONSTANT,
+    EOF
 }
+
