@@ -81,7 +81,7 @@ private Token readString() {
     return new Token(TokenType.STRING_CONSTANT, lexeme, line);
 }
 
-private Token readIdentifier() {
+private Token readIdentifierAndKeyword() {
     int start = current;
 
     while (Character.isLetterOrDigit(peek()) || peek() == '_') {
@@ -111,7 +111,7 @@ private Token readIdentifier() {
         } else if (c == '"') {
              tokens.add(readString());
         } else if (Character.isLetter(c) || c == '_') {
-            tokens.add(readIdentifier());
+            tokens.add(readIdentifierAndKeyword());
         }
         else {
             advance(); 
