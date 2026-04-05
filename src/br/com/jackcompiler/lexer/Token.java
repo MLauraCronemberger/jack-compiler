@@ -23,11 +23,6 @@ public class Token {
         .replace("\"", "&quot;");
     }
 
-    public String toXML() {
-        String value = escapeXML(lexeme);
-        return "<" + getCategory() + "> " + value + " </" + getCategory() + ">";
-    }
-
     private String getCategory() {
         switch (type) {
             case KEYWORD: return "keyword";
@@ -37,5 +32,10 @@ public class Token {
             case STRING_CONSTANT: return "stringConstant";
             default: return "";
         }
+    }
+    
+    public String toXML() {
+        String value = escapeXML(lexeme);
+        return "<" + getCategory() + "> " + value + " </" + getCategory() + ">";
     }
 }
