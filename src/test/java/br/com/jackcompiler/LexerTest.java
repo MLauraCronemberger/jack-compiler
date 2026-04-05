@@ -13,7 +13,7 @@ public class LexerTest {
 
         testNumero();
         testString();
-        testIdentifier();
+        testIdentifierEKeyword();
         testSimbolos();
         testComentarios();
 
@@ -39,8 +39,8 @@ public class LexerTest {
         runTest("String", "\"hello\"");
     }
 
-    private static void testIdentifier() {
-        runTest("Identifier", "abc varName");
+    private static void testIdentifierEKeyword() {
+        runTest("Identifier", "abc boolean varName class");
     }
 
     private static void testSimbolos() {
