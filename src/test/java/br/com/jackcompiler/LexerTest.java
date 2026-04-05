@@ -40,7 +40,7 @@ public class LexerTest {
     }
 
     private static void testIdentifierEKeyword() {
-        runTest("Identifier", "abc boolean varName class");
+        runTest("Identifier e Keywords", "abc boolean varName class");
     }
 
     private static void testSimbolos() {

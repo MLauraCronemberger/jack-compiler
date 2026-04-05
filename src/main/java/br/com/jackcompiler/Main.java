@@ -1,33 +1,41 @@
 package br.com.jackcompiler;
 
+import br.com.jackcompiler.lexer.Scanner;
+import br.com.jackcompiler.lexer.Token;
+import br.com.jackcompiler.xml.XmlGenerator;
+
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
 
-import br.com.jackcompiler.lexer.Token;
-import br.com.jackcompiler.lexer.TokenType;
-import br.com.jackcompiler.xml.XmlGenerator;
-import br.com.jackcompiler.lexer.Scanner;
-
 public class Main {
-    public static void main(String[] args) {
 
-        // Token t = new Token(TokenType.SYMBOL, "<", 1);
-        // System.out.println(t.toXML());
+    public static void main(String[] args) throws Exception {
 
-        // Scanner scanner = new Scanner("x / y = 10 // resultado");
-        // List<Token> tokens = scanner.tokenize();
+        if (args.length != 2) {
+            System.out.println("Uso: java Main <arquivo.jack> <saida.xml>");
+            return;
+        }
 
-        // for (Token t : tokens) {
-        //     if (t.getType() != TokenType.EOF) {
-        //         System.out.println(t.toXML());
-        //     }
-        // }
+        String inputPath = args[0];
+        String outputPath = args[1];
 
-        Scanner scanner = new Scanner("let x = 5;");
+        gerarXml(inputPath, outputPath);
+    }
+
+    private static void gerarXml(String inputPath, String outputPath) throws Exception {
+
+        String code = Files.readString(Path.of(inputPath));
+
+        Scanner scanner = new Scanner(code);
         List<Token> tokens = scanner.tokenize();
 
         String xml = XmlGenerator.generate(tokens);
 
-        System.out.println(xml);
+        Files.createDirectories(Path.of(outputPath).getParent());
+        Files.writeString(Path.of(outputPath), xml);
 
+        System.out.println("✅ XML gerado: " + outputPath);
     }
+
 }
