@@ -1,0 +1,12 @@
+# arquivos compilados
+*.class
+
+# pasta de build (se criar depois)
+bin/
+out/
+
+# arquivos do VSCode
+.vscode/
+
+# sistema
+.DS_Store
