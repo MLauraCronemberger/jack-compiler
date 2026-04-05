@@ -52,7 +52,7 @@ public class Scanner {
 
     private Token readNumber() {
         int start = current;
-        
+
         while (Character.isDigit(peek())) {
             advance();
         }
@@ -60,6 +60,27 @@ public class Scanner {
         String lexeme = code.substring(start, current);  
         return new Token(TokenType.INTEGER_CONSTANT, lexeme, line);
     }
+
+    private Token readString() {
+    advance(); 
+    int start = current;
+
+    while (peek() != '"' && peek() != '\0') {
+        if (peek() == '\n') {
+            throw new RuntimeException("String não fechada na linha " + line);
+        }
+        advance();
+    }
+
+    if (peek() == '\0') {
+        throw new RuntimeException("String não fechada na linha " + line);
+    }
+
+    String lexeme = code.substring(start, current);
+    advance(); 
+    return new Token(TokenType.STRING_CONSTANT, lexeme, line);
+}
+
 
 
     public List<Token> tokenize() {
@@ -71,7 +92,10 @@ public class Scanner {
 
         if (Character.isDigit(c)) {
             tokens.add(readNumber());
-        } else {
+        } else if (c == '"') {
+             tokens.add(readString());
+        }
+        else {
             advance(); // ignora o resto por enquanto
         }
     }

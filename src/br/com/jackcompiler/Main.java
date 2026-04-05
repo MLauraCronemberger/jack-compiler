@@ -12,7 +12,7 @@ public class Main {
         // Token t = new Token(TokenType.SYMBOL, "<", 1);
         // System.out.println(t.toXML());
 
-        Scanner scanner = new Scanner("10 20 30");
+        Scanner scanner = new Scanner("\"abc\"");
         List<Token> tokens = scanner.tokenize();
 
         for (Token t : tokens) {
@@ -20,6 +20,8 @@ public class Main {
                 System.out.println(t.toXML());
             }
         }
+
+
 
 
     }
