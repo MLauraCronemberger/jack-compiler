@@ -34,6 +34,18 @@ public class Scanner {
     }
 }   
 
+    private void skipWhitespace() {
+    while (true) {
+        char c = peek();
+
+        if (c == ' ' || c == '\t' || c == '\r' || c == '\n') {
+            advance();
+        } else {
+            break;
+        }
+    }
+}
+
     public Scanner(String code) {
         this.code = code;
     }
