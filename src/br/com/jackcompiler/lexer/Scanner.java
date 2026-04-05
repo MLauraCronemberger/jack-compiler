@@ -27,6 +27,13 @@ public class Scanner {
     return code.charAt(current);
     }
 
+    private char peekNext() {
+    if (current + 1 >= code.length()) {
+        return '\0'; 
+    }
+    return code.charAt(current + 1);
+}
+
     private void advance() {
     if (current < code.length()) {
         if (code.charAt(current) == '\n') line++;
@@ -108,6 +115,40 @@ private Token readSymbol() {
     throw new RuntimeException("Símbolo inválido na linha " + line);
 }
 
+private void pularComment() {
+    // caso: comentário de linha //
+    if (peek() == '/' && peekNext() == '/') {
+        advance();
+        advance();
+
+        while (peek() != '\n' && peek() != '\0') {
+            advance();
+        }
+        // consome a quebra de linha
+        if (peek() == '\n') {
+            advance();
+        }
+        return;
+    }
+
+    // caso: comentário de bloco /*
+    if (peek() == '/' && peekNext() == '*') {
+        advance();
+        advance();
+
+        while (true) {
+            if (peek() == '\0') {
+                throw new RuntimeException("Comentário não fechado na linha " + line);
+            }
+            if (peek() == '*' && peekNext() == '/') {
+                advance(); 
+                advance();
+                break;
+            }
+            advance();
+        }
+    }
+}
 
     public List<Token> tokenize() {
     while (current < code.length()) {
@@ -122,7 +163,10 @@ private Token readSymbol() {
              tokens.add(readString());
         } else if (Character.isLetter(c) || c == '_') {
             tokens.add(readIdentifierAndKeyword());
-        }else if (SYMBOLS.contains(c)) {
+        } else if (c == '/' && (peekNext() == '/' || peekNext() == '*')) {
+            pularComment();
+             continue;
+        } else if (SYMBOLS.contains(c)) {
             tokens.add(readSymbol());
         }
         else {
