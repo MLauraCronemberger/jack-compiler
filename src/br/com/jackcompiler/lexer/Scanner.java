@@ -97,6 +97,16 @@ private Token readIdentifierAndKeyword() {
     return new Token(TokenType.IDENTIFIER, lexeme, line);
 }
 
+private Token readSymbol() {
+    char c = peek();
+
+    if (SYMBOLS.contains(c)) {
+        advance();
+        return new Token(TokenType.SYMBOL, String.valueOf(c), line);
+    }
+
+    throw new RuntimeException("Símbolo inválido na linha " + line);
+}
 
 
     public List<Token> tokenize() {
@@ -112,6 +122,8 @@ private Token readIdentifierAndKeyword() {
              tokens.add(readString());
         } else if (Character.isLetter(c) || c == '_') {
             tokens.add(readIdentifierAndKeyword());
+        }else if (SYMBOLS.contains(c)) {
+            tokens.add(readSymbol());
         }
         else {
             advance(); 

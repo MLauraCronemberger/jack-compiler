@@ -12,7 +12,7 @@ public class Main {
         // Token t = new Token(TokenType.SYMBOL, "<", 1);
         // System.out.println(t.toXML());
 
-        Scanner scanner = new Scanner("class funcaoTeste funcao_Teste funcao_123 while");
+        Scanner scanner = new Scanner("x + y = 10");
         List<Token> tokens = scanner.tokenize();
 
         for (Token t : tokens) {
