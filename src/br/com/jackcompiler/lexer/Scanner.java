@@ -50,18 +50,18 @@ public class Scanner {
         this.code = code;
     }
 
-    private Token readNumber() {
-        int start = current;
+private Token readNumber() {
+    int start = current;
 
         while (Character.isDigit(peek())) {
             advance();
         }
         
         String lexeme = code.substring(start, current);  
-        return new Token(TokenType.INTEGER_CONSTANT, lexeme, line);
-    }
+        return new Token(TokenType.INTEGER_CONSTANT, lexeme, line);    
+}
 
-    private Token readString() {
+private Token readString() {
     advance(); 
     int start = current;
 
@@ -81,6 +81,22 @@ public class Scanner {
     return new Token(TokenType.STRING_CONSTANT, lexeme, line);
 }
 
+private Token readIdentifier() {
+    int start = current;
+
+    while (Character.isLetterOrDigit(peek()) || peek() == '_') {
+        advance();
+    }
+
+    String lexeme = code.substring(start, current);
+
+    if (KEYWORDS.contains(lexeme)) {
+        return new Token(TokenType.KEYWORD, lexeme, line);
+    }
+
+    return new Token(TokenType.IDENTIFIER, lexeme, line);
+}
+
 
 
     public List<Token> tokenize() {
@@ -94,9 +110,11 @@ public class Scanner {
             tokens.add(readNumber());
         } else if (c == '"') {
              tokens.add(readString());
+        } else if (Character.isLetter(c) || c == '_') {
+            tokens.add(readIdentifier());
         }
         else {
-            advance(); // ignora o resto por enquanto
+            advance(); 
         }
     }
 
