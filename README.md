@@ -54,8 +54,8 @@ jack-compiler/
 
 ## ⚙️ Funcionalidades
 
-✔ Tokenização completa da linguagem Jack
-✔ Identificação de:
+✔ Tokenização completa da linguagem Jack  
+✔ Identificação de:  
 
 * Keywords
 * Symbols
@@ -63,8 +63,8 @@ jack-compiler/
 * String constants
 * Identifiers
 
-✔ Geração de saída XML no padrão oficial
-✔ Validação com arquivos do Nand2Tetris
+✔ Geração de saída XML no padrão oficial  
+✔ Validação com arquivos do Nand2Tetris  
 
 ---
 
@@ -127,7 +127,7 @@ java -cp bin br.com.jackcompiler.Main src/test/java/br/com/jackcompiler/Main.jac
 Saída esperada:
 
 ```
-✅ XML gerado: output/MainT.xml
+XML gerado: output/MainT.xml
 ```
 
 ---
@@ -144,7 +144,7 @@ O projeto utiliza três abordagens:
 
 ## 📌 Observações
 
-* O diretório `output/` contém apenas arquivos produzidos pelo compilador
+* O diretório `output/` contém apenas arquivos produzidos pelo próprio compilador
 * Os arquivos em `nand2tetris/` são a referência oficial de validação
 
 ---
