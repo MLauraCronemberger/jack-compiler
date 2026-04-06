@@ -19,30 +19,29 @@ A organização do projeto está dividida da seguinte forma:
 ```
 jack-compiler/
 │
-│
-├── nand2tetris/             # XMLs oficiais usados para validação
+├── nand2tetris/             🔹XMLs oficiais usados para validação
 │   ├── MainT.xml
 │   ├── SquareT.xml
 │   └── SquareGameT.xml
 │
-├── output/                  # XMLs gerados pelo compilador para validação
+├── output/                  🔹XMLs gerados pelo compilador para validação
 │
 ├── src/
 │   ├── main/java/br/com/jackcompiler/
-│   │   ├── lexer/           # 🔹 Lógica do analisador léxico
+│   │   ├── lexer/           🔹Lógica do analisador léxico
 │   │   │   ├── Scanner.java
 │   │   │   ├── Token.java
 │   │   │   └── TokenType.java
 │   │   │
-│   │   ├── xml/             # 🔹 Geração de saída XML
+│   │   ├── xml/             🔹Geração de saída XML
 │   │   │   └── XmlGenerator.java
 │   │   │
-│   │   └── Main.java        # 🔹 Execução manual via terminal
+│   │   └── Main.java        🔹Execução manual via terminal
 │   │
 │   ├── test/java/br/com/jackcompiler/
-│   │   ├── FilesAndValidationRunner.java  # 🔹 Gera XML + valida com os XMLs oficiais
-│   │   ├── LexerTest.java                 # 🔹 Testes unitários simples do lexer
-│   │   ├── Main.jack
+│   │   ├── FilesAndValidationRunner.java  🔹Gera XML + valida com os XMLs oficiais
+│   │   ├── LexerTest.java                 🔹Testes unitários simples do lexer
+│   │   ├── Main.jack                      🔹Arquivos .jack oficiais para teste do compilador
 │   │   ├── Square.jack
 │   │   └── SquareGame.jack
 │
@@ -164,6 +163,5 @@ O projeto utiliza três abordagens:
 **Este repositório possui fins acadêmicos.**
 
 </div>
-
 
 ---
