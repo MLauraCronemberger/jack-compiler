@@ -67,9 +67,54 @@ jack-compiler/
 
 ---
 
+## 🧪 Sobre os testes
+
+O projeto utiliza três abordagens:
+
+* **LexerTest** → valida manualmente os tokens
+* **FilesAndValidationRunner** → valida com o padrão oficial
+* **Main** → execução livre (modo usuário)
+
+---
+
 ## 🚀 Como executar
 
-### 🔹 1. Rodar testes do Lexer (visualização simples)
+### 🐳 Via Docker (recomendado)
+* Não é necessário ter Java instalado nem se preocupar com versões.
+* Pré-requisito: ter o **Docker Desktop** instalado e aberto.
+
+
+#### 🔹 1. Build da imagem (primeira vez ou após alterar o código)
+
+```bash
+docker compose build
+```
+
+#### 🔹 2.  Rodar testes do Lexer — exibe os tokens gerados no console:
+
+```bash
+docker compose run --rm lexer
+```
+
+#### 🔹 3. Validar com o Nand2Tetris — lê os .jack oficiais, gera os XMLs e compara:
+
+```bash
+docker compose up validation
+```
+#### 🔹4. Compilar um arquivo .jack manualmente
+* Os XMLs gerados são salvos na pasta output/ do projeto.
+* Exemplo:
+
+```bash
+docker compose run --rm compiler src/test/java/br/com/jackcompiler/Main.jack output/MainT.xml
+```
+
+
+
+### ☕ Localmente (requer Java 21+)
+
+
+#### 🔹 1. Rodar testes do Lexer (visualização simples)
 
 Exibe os tokens teste gerados em XML no console:
 
@@ -85,7 +130,7 @@ java -cp bin br.com.jackcompiler.LexerTest
 
 ---
 
-### 🔹 2. Gerar XML e validar com o Nand2Tetris
+#### 🔹 2. Gerar XML e validar com o Nand2Tetris
 
 Este teste:
 
@@ -105,7 +150,7 @@ java -cp bin br.com.jackcompiler.FilesAndValidationRunner
 
 ---
 
-### 🔹 3. Gerar XML de qualquer arquivo `.jack`
+#### 🔹 3. Gerar XML de qualquer arquivo `.jack`
 
 Permite usar o compilador manualmente via terminal:
 
@@ -131,15 +176,6 @@ XML gerado: output/MainT.xml
 
 ---
 
-## 🧪 Sobre os testes
-
-O projeto utiliza três abordagens:
-
-* **LexerTest** → valida manualmente os tokens
-* **FilesAndValidationRunner** → valida com o padrão oficial
-* **Main** → execução livre (modo usuário)
-
----
 
 ## 📌 Observações
 
