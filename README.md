@@ -90,11 +90,14 @@ O projeto utiliza três abordagens:
 docker compose build
 ```
 
+---
+
 #### 🔹 2.  Rodar testes do Lexer — exibe os tokens gerados no console:
 
 ```bash
 docker compose run --rm lexer
 ```
+---
 
 #### 🔹 3. Validar com o Nand2Tetris:
 
@@ -107,6 +110,8 @@ Este teste:
 ```bash
 docker compose up validation
 ```
+---
+
 #### 🔹4. Compilar um arquivo .jack manualmente
 * Os XMLs gerados são salvos na pasta output/ do projeto.
 * Exemplo:
@@ -115,6 +120,7 @@ docker compose up validation
 docker compose run --rm compiler src/test/java/br/com/jackcompiler/Main.jack output/MainT.xml
 ```
 
+---
 
 
 ### ☕ Localmente (requer Java 21+)
