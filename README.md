@@ -96,7 +96,13 @@ docker compose build
 docker compose run --rm lexer
 ```
 
-#### 🔹 3. Validar com o Nand2Tetris — lê os .jack oficiais, gera os XMLs e compara:
+#### 🔹 3. Validar com o Nand2Tetris:
+
+Este teste:
+
+* Lê os arquivos `.jack` oficiais 
+* Gera os XMLs com base no compilador feito
+* Compara com os XMLs oficiais e valida
 
 ```bash
 docker compose up validation
@@ -132,11 +138,7 @@ java -cp bin br.com.jackcompiler.LexerTest
 
 #### 🔹 2. Gerar XML e validar com o Nand2Tetris
 
-Este teste:
-
-* Lê os arquivos `.jack` oficiais 
-* Gera os XMLs com base no compilador feito
-* Compara com os XMLs oficiais e valida
+Este teste lê os .jack oficiais, gera os XMLs e compara com o gabarito do Nand2Tetris.
 
 ```bash
 Remove-Item -Recurse -Force bin
