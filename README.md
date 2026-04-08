@@ -1,8 +1,8 @@
 # 🧠 Jack Compiler - Analisador Léxico (Nand2Tetris)
 
-Este projeto implementa um **analisador léxico (lexer)** para a linguagem **Jack**, proposta no curso **Nand2Tetris**.
+Este projeto implementa um **analisador léxico (lexer)** para a linguagem **Jack**, proposta no projeto **Nand2Tetris**.
 
-O sistema lê arquivos `.jack`, gera seus respectivos tokens e exporta a saída em formato **XML**, seguindo o padrão oficial do projeto.
+O sistema, feito na linguagem **Java**, lê arquivos `.jack`, gera seus respectivos tokens e exporta a saída em formato **XML**, seguindo o padrão oficial do projeto.
 
 ---
 
