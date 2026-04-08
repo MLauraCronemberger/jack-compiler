@@ -45,6 +45,8 @@ jack-compiler/
 │   │   ├── Square.jack
 │   │   └── SquareGame.jack
 │
+├── .dockerfile                            🔹Configurações Docker para facilitar a execução do projeto
+├── .docker-compose
 ├── .gitignore
 └── README.md
 ```
