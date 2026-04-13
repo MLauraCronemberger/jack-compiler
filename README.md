@@ -19,36 +19,39 @@ A organização do projeto está dividida da seguinte forma:
 ```
 jack-compiler/
 │
-├── nand2tetris/             🔹XMLs oficiais usados para validação
+├── expected-output-nand2tetris/   🔹XMLs oficiais do nand2tetris usados como referência para validação
 │   ├── MainT.xml
 │   ├── SquareT.xml
 │   └── SquareGameT.xml
 │
-├── output/                  🔹XMLs gerados pelo compilador para validação
+├── output/                        🔹XMLs gerados pelo compilador para comparação e validação
+│   └── .gitkeep                   🔹Mantém a pasta versionada mesmo vazia
 │
 ├── src/
-│   ├── main/java/br/com/jackcompiler/
-│   │   ├── lexer/           🔹Lógica do analisador léxico
+│   ├── main/
+│   │   ├── Main.java              🔹Ponto de entrada para execução manual via terminal
+│   │   │
+│   │   ├── lexer/                 🔹Implementação do analisador léxico
 │   │   │   ├── Scanner.java
 │   │   │   ├── Token.java
 │   │   │   └── TokenType.java
 │   │   │
-│   │   ├── xml/             🔹Geração de saída XML
-│   │   │   └── XmlGenerator.java
-│   │   │
-│   │   └── Main.java        🔹Execução manual via terminal
+│   │   └── xml/                   🔹Responsável pela geração da saída em XML
+│   │       └── XmlGenerator.java
 │   │
-│   ├── test/java/br/com/jackcompiler/
-│   │   ├── FilesAndValidationRunner.java  🔹Gera XML + valida com os XMLs oficiais
-│   │   ├── LexerTest.java                 🔹Testes unitários simples do lexer
-│   │   ├── Main.jack                      🔹Arquivos .jack oficiais para teste do compilador
-│   │   ├── Square.jack
-│   │   └── SquareGame.jack
+│   └── test/
+│       ├── FilesAndValidationRunner.java  🔹Executa o compilador e valida a saída com os XMLs de referência
+│       ├── LexerTest.java                 🔹Testes unitários do analisador léxico
+│       │
+│       └── resources-jack/               🔹Arquivos .jack usados como entrada nos testes
+│           ├── Main.jack
+│           ├── Square.jack
+│           └── SquareGame.jack
 │
-├── .dockerfile                            🔹Configurações Docker para facilitar a execução do projeto
-├── .docker-compose
-├── .gitignore
-└── README.md
+├── dockerfile                    🔹Configuração do ambiente Docker para execução simplificada
+├── docker-compose.yml            🔹Orquestração dos containers (se necessário)
+├── .gitignore                    🔹Arquivos e pastas ignorados pelo Git
+└── README.md                     🔹Documentação do projeto
 ```
 
 ---
