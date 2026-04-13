@@ -35,7 +35,7 @@ public class Main {
         Files.createDirectories(Path.of(outputPath).getParent());
         Files.writeString(Path.of(outputPath), xml);
 
-        System.out.println("✅ XML gerado: " + outputPath);
+        System.out.println("XML gerado: " + outputPath);
     }
 
 }

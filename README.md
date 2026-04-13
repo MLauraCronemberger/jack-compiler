@@ -175,7 +175,7 @@ java -cp bin br.com.jackcompiler.Main <caminho.arquivo.jack> <output/nome-arquiv
 #### ✅ Exemplo:
 
 ```bash
-java -cp bin br.com.jackcompiler.Main src/test/java/br/com/jackcompiler/Main.jack output/MainT.xml
+java -cp bin br.com.jackcompiler.Main src/test/resources-jack/Main.jack output/MainT.xml
 ```
 
 Saída esperada:

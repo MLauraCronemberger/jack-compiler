@@ -25,7 +25,7 @@ services:
   # Uso: docker compose run --rm compiler <arquivo.jack> <output/nome.xml>
   # Exemplo:
   #   docker compose run --rm compiler \
-  #     src/test/java/br/com/jackcompiler/Main.jack output/MainT.xml
+  #     src/test/resources-jack/Main.jack output/MainT.xml
   # ─────────────────────────────────────────────────────────────────
   compiler:
     build: .
