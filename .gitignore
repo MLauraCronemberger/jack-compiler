@@ -1,9 +1,10 @@
 # arquivos compilados
 *.class
 
-# pasta de build (se criar depois)
+# pasta de build 
 bin/
 out/
+target/
 
 # arquivos do VSCode
 .vscode/
