@@ -44,6 +44,4 @@ public class Main {
 
     System.out.println("XML gerado: " + outputPath);
 }
-
-
 }

@@ -33,9 +33,9 @@ public class FilesAndValidationRunner {
 
     private static boolean runTest(String name) throws Exception {
 
-        String inputPath = "src/test/resources-jack/" + name + ".jack";
+        String inputPath = "src/test/resources/resources-jack/" + name + ".jack";
         String outputPath = "output/" + name + "T-Teste.xml";
-        String expectedPath = "expected-output-nand2tetris/" + name + "T.xml";
+        String expectedPath = "src/test/resources/expected-output-nand2tetris/" + name + "T.xml";
 
         processFile(inputPath, outputPath);
 
