@@ -11,7 +11,7 @@ COPY . .
  
 # Compila todos os .java de uma vez durante o build da imagem.
 # Coloca os .class em /app/bin
-RUN find src -name "*.java" | xargs javac -d bin
+RUN mkdir -p bin && find src -name "*.java" | xargs javac -d bin
  
 # Volume onde os XMLs gerados serão salvos.
 # Mapeia para o diretório output/ da sua máquina via docker-compose.
@@ -19,4 +19,4 @@ VOLUME ["/app/output"]
  
 # Comando padrão: roda o runner de validação completa.
 # Pode ser sobrescrito na hora do `docker run` ou no compose.
-CMD ["java", "-cp", "bin", "br.com.jackcompiler.FilesAndValidationRunner"]
+CMD ["java", "-cp", "bin", "br.com.jackcompiler.Main"]

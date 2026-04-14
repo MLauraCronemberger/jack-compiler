@@ -10,21 +10,25 @@ import java.util.List;
 
 public class FilesAndValidationRunner {
 
-    public static void main(String[] args) throws Exception {
+    private static void processFile(String inputPath, String outputPath) throws Exception {
 
-        int total = 0;
-        int passed = 0;
+        String code = Files.readString(Path.of(inputPath));
 
-        if (runTest("Main")) passed++;
-        total++;
+        Scanner scanner = new Scanner(code);
+        List<Token> tokens = scanner.tokenize();
 
-        if (runTest("Square")) passed++;
-        total++;
+        String xml = XmlGenerator.generate(tokens);
 
-        if (runTest("SquareGame")) passed++;
-        total++;
+        Files.createDirectories(Path.of("output"));
+        Files.writeString(Path.of(outputPath), xml);
+    }
 
-        System.out.println(passed + "/" + total + " arquivos validados com sucesso!");
+    // remove diferenças bobas de espaço/quebra de linha
+    private static String normalize(String input) {
+        return input
+                .replaceAll("\\r", "")
+                .replaceAll("\\s+", " ")
+                .trim();
     }
 
     private static boolean runTest(String name) throws Exception {
@@ -49,24 +53,27 @@ public class FilesAndValidationRunner {
         return isEqual;
     }
 
-    private static void processFile(String inputPath, String outputPath) throws Exception {
+    public static void runAllTests() throws Exception {
 
-        String code = Files.readString(Path.of(inputPath));
+        int total = 0;
+        int passed = 0;
 
-        Scanner scanner = new Scanner(code);
-        List<Token> tokens = scanner.tokenize();
+        if (runTest("Main")) passed++;
+        total++;
 
-        String xml = XmlGenerator.generate(tokens);
+        if (runTest("Square")) passed++;
+        total++;
 
-        Files.createDirectories(Path.of("output"));
-        Files.writeString(Path.of(outputPath), xml);
+        if (runTest("SquareGame")) passed++;
+        total++;
+
+        System.out.println(passed + "/" + total + " arquivos validados com sucesso!");
     }
 
-    // remove diferenças bobas de espaço/quebra de linha
-    private static String normalize(String input) {
-        return input
-                .replaceAll("\\r", "")
-                .replaceAll("\\s+", " ")
-                .trim();
-    }
+
+    public static void main(String[] args) throws Exception {
+    runAllTests();
+}
+
+
 }

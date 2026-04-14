@@ -12,30 +12,22 @@ public class Main {
 
     public static void main(String[] args) throws Exception {
 
-        if (args.length != 2) {
-            System.out.println("Uso: java Main <arquivo.jack> <saida.xml>");
-            return;
-        }
-
-        String inputPath = args[0];
-        String outputPath = args[1];
-
-        gerarXml(inputPath, outputPath);
+    // modo teste (sem argumentos)
+    if (args.length == 0) {
+        FilesAndValidationRunner.runAllTests();
+        return;
     }
 
-    private static void gerarXml(String inputPath, String outputPath) throws Exception {
-
-        String code = Files.readString(Path.of(inputPath));
-
-        Scanner scanner = new Scanner(code);
-        List<Token> tokens = scanner.tokenize();
-
-        String xml = XmlGenerator.generate(tokens);
-
-        Files.createDirectories(Path.of(outputPath).getParent());
-        Files.writeString(Path.of(outputPath), xml);
-
-        System.out.println("XML gerado: " + outputPath);
+    // modo normal
+    if (args.length != 2) {
+        System.out.println("Uso: java Main <arquivo.jack> <saida.xml>");
+        return;
     }
+
+    String inputPath = args[0];
+    String outputPath = args[1];
+
+    gerarXml(inputPath, outputPath);
+}
 
 }

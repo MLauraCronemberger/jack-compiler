@@ -1,26 +1,6 @@
 services:
  
   # ─────────────────────────────────────────────────────────────────
-  # Serviço padrão: valida os 3 arquivos .jack contra os XMLs oficiais
-  # Uso: docker compose up validation
-  # ─────────────────────────────────────────────────────────────────
-  validation:
-    build: .
-    command: ["java", "-cp", "bin", "br.com.jackcompiler.FilesAndValidationRunner"]
-    volumes:
-      - ./output:/app/output   # XMLs gerados aparecem na sua pasta local
- 
-  # ─────────────────────────────────────────────────────────────────
-  # Exibe os tokens do LexerTest no console
-  # Uso: docker compose run --rm lexer
-  # ─────────────────────────────────────────────────────────────────
-  lexer:
-    build: .
-    command: ["java", "-cp", "bin", "br.com.jackcompiler.LexerTest"]
-    volumes:
-      - ./output:/app/output
- 
-  # ─────────────────────────────────────────────────────────────────
   # Compila um arquivo .jack qualquer para XML manualmente
   # Uso: docker compose run --rm compiler <arquivo.jack> <output/nome.xml>
   # Exemplo:
