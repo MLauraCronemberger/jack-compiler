@@ -30,4 +30,20 @@ public class Main {
     gerarXml(inputPath, outputPath);
 }
 
+    private static void gerarXml(String inputPath, String outputPath) throws Exception {
+
+    String code = Files.readString(Path.of(inputPath));
+
+    Scanner scanner = new Scanner(code);
+    List<Token> tokens = scanner.tokenize();
+
+    String xml = XmlGenerator.generate(tokens);
+
+    Files.createDirectories(Path.of(outputPath).getParent());
+    Files.writeString(Path.of(outputPath), xml);
+
+    System.out.println("XML gerado: " + outputPath);
+}
+
+
 }
