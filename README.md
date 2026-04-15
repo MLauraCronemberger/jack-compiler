@@ -55,7 +55,7 @@ jack-compiler/
 │
 └── .gitignore                     🔹Arquivos e pastas ignorados pelo Git
 
-
+```
 ---
 
 ## ⚙️ Funcionalidades
@@ -96,8 +96,6 @@ O projeto utiliza duas abordagens:
 ```bash
 mvn clean package
 ```
-
----
 
 #### 🔹 2. Rodar todos os testes e validar com o Nand2Tetris
 
