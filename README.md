@@ -97,6 +97,8 @@ O projeto utiliza duas abordagens:
 mvn clean package
 ```
 
+---
+
 #### 🔹 2. Rodar todos os testes e validar com o Nand2Tetris
 
 Lê os arquivos `.jack` oficiais, gera os XMLs e compara com o gabarito:
@@ -131,7 +133,7 @@ Saída esperada:
 XML gerado: output/MainT.xml
 ```
 
-> Os XMLs gerados são salvos na pasta `output/` do projeto.
+Os XMLs gerados são salvos na pasta `output/` do projeto.
 
 ---
 
