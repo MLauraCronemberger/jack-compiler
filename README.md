@@ -19,40 +19,42 @@ A organização do projeto está dividida da seguinte forma:
 ```
 jack-compiler/
 │
-├── expected-output-nand2tetris/   🔹XMLs oficiais do nand2tetris usados como referência para validação
-│   ├── MainT.xml
-│   ├── SquareT.xml
-│   └── SquareGameT.xml
-│
-├── output/                        🔹XMLs gerados pelo compilador para comparação e validação
-│   └── .gitkeep                   🔹Mantém a pasta versionada mesmo vazia
-│
 ├── src/
 │   ├── main/
-│   │   ├── Main.java              🔹Ponto de entrada para execução manual via terminal
-│   │   │
-│   │   ├── lexer/                 🔹Implementação do analisador léxico
-│   │   │   ├── Scanner.java
-│   │   │   ├── Token.java
-│   │   │   └── TokenType.java
-│   │   │
-│   │   └── xml/                   🔹Responsável pela geração da saída em XML
-│   │       └── XmlGenerator.java
+│   │   └── java/
+│   │       └── br/com/jackcompiler/
+│   │           ├── Main.java                      🔹Ponto de entrada da aplicação (execução manual e testes)
+│   │           ├── FilesAndValidationRunner.java  🔹Executa os testes e valida a saída com os XMLs de referência
+│   │           │
+│   │           ├── lexer/                         🔹Implementação do analisador léxico
+│   │           │   ├── Scanner.java
+│   │           │   ├── Token.java
+│   │           │   └── TokenType.java
+│   │           │
+│   │           └── xml/                           🔹Responsável pela geração da saída em XML
+│   │               └── XmlGenerator.java
 │   │
 │   └── test/
-│       ├── FilesAndValidationRunner.java  🔹Executa o compilador e valida a saída com os XMLs de referência
-│       ├── LexerTest.java                 🔹Testes unitários do analisador léxico
-│       │
-│       └── resources-jack/               🔹Arquivos .jack usados como entrada nos testes
-│           ├── Main.jack
-│           ├── Square.jack
-│           └── SquareGame.jack
+│       └── resources/
+│           ├── expected-output-nand2tetris/       🔹XMLs oficiais do nand2tetris usados como referência para validação
+│           │   ├── MainT.xml
+│           │   ├── SquareT.xml
+│           │   └── SquareGameT.xml
+│           │
+│           └── resources-jack/                    🔹Arquivos .jack usados como entrada nos testes
+│               ├── Main.jack
+│               ├── Square.jack
+│               └── SquareGame.jack
 │
-├── dockerfile                    🔹Configuração do ambiente Docker para execução simplificada
-├── docker-compose.yml            🔹Orquestração dos containers (se necessário)
-├── .gitignore                    🔹Arquivos e pastas ignorados pelo Git
-└── README.md                     🔹Documentação do projeto
-```
+│
+├── output/                        🔹XMLs gerados pelo compilador para comparação e validação
+│
+├── pom.xml                        🔹Arquivo de configuração do Maven (build, compilação e execução)
+│
+├── README.md                      🔹Documentação do projeto
+│
+└── .gitignore                     🔹Arquivos e pastas ignorados pelo Git
+
 
 ---
 
@@ -74,111 +76,55 @@ jack-compiler/
 
 ## 🧪 Sobre os testes
 
-O projeto utiliza três abordagens:
+O projeto utiliza duas abordagens:
 
-* **LexerTest** → valida manualmente os tokens
-* **FilesAndValidationRunner** → valida com o padrão oficial
+* **FilesAndValidationRunner** → gera os tokens dos arquivos .jack e valida com o padrão oficial
 * **Main** → execução livre (modo usuário)
 
 ---
 
 ## 🚀 Como executar
 
-### 🐳 Via Docker (recomendado)
-* Não é necessário ter Java instalado nem se preocupar com versões.
-* Pré-requisito: ter o **Docker Desktop** instalado e aberto.
+### ☕ Via Maven (recomendado)
 
+* Não é necessário compilar manualmente com javac  
+* O Maven gerencia build e empacotamento automaticamente  
+* Pré-requisitos: ter `Java 17+` e `Maven` instalados  
 
-#### 🔹 1. Build da imagem (primeira vez ou após alterar o código)
+#### 🔹 1. Build do projeto
 
 ```bash
-docker compose build
+mvn clean package
 ```
 
 ---
 
-#### 🔹 2.  Rodar testes do Lexer — exibe os tokens gerados no console:
+#### 🔹 2. Rodar todos os testes e validar com o Nand2Tetris
+
+Lê os arquivos `.jack` oficiais, gera os XMLs e compara com o gabarito:
 
 ```bash
-docker compose run --rm lexer
+java -jar target/jack-compiler.jar
 ```
----
 
-#### 🔹 3. Validar com o Nand2Tetris:
+Saída esperada:
 
-Este teste:
-
-* Lê os arquivos `.jack` oficiais 
-* Gera os XMLs com base no compilador feito
-* Compara com os XMLs oficiais e valida
-
-```bash
-docker compose up validation
 ```
----
-
-#### 🔹4. Compilar um arquivo .jack manualmente
-* Os XMLs gerados são salvos na pasta output/ do projeto.
-* Exemplo:
-
-```bash
-docker compose run --rm compiler src/test/java/br/com/jackcompiler/Main.jack output/MainT.xml
+Main.jack -> MainT.xml PASSED
+Square.jack -> SquareT.xml PASSED
+SquareGame.jack -> SquareGameT.xml PASSED
+3/3 arquivos validados com sucesso!
 ```
 
 ---
 
+#### 🔹 3. Compilar um arquivo `.jack` manualmente
 
-### ☕ Localmente (requer Java 21+)
-
-
-#### 🔹 1. Rodar testes do Lexer (visualização simples)
-
-Exibe os tokens teste gerados em XML no console:
+Permite usar o compilador em qualquer arquivo `.jack` via terminal:
 
 ```bash
-Remove-Item -Recurse -Force bin
-
-mkdir bin
-
-javac -d bin (Get-ChildItem -Recurse -Filter *.java | ForEach-Object { $_.FullName })
-
-java -cp bin br.com.jackcompiler.LexerTest
-```
-
----
-
-#### 🔹 2. Gerar XML e validar com o Nand2Tetris
-
-Este teste lê os .jack oficiais, gera os XMLs e compara com o gabarito do Nand2Tetris.
-
-```bash
-Remove-Item -Recurse -Force bin
-
-mkdir bin
-
-javac -d bin (Get-ChildItem -Recurse -Filter *.java | ForEach-Object { $_.FullName })
-
-java -cp bin br.com.jackcompiler.FilesAndValidationRunner
-```
-
----
-
-#### 🔹 3. Gerar XML de qualquer arquivo `.jack`
-
-Permite usar o compilador manualmente via terminal:
-
-```bash
-Remove-Item -Recurse -Force bin
-
-javac -d bin (Get-ChildItem -Recurse -Filter *.java | ForEach-Object { $_.FullName })
-
-java -cp bin br.com.jackcompiler.Main <caminho.arquivo.jack> <output/nome-arquivo.xml>
-```
-
-#### ✅ Exemplo:
-
-```bash
-java -cp bin br.com.jackcompiler.Main src/test/resources-jack/Main.jack output/MainT.xml
+java -jar target/jack-compiler.jar \
+  src/test/resources/resources-jack/Main.jack output/MainT.xml
 ```
 
 Saída esperada:
@@ -187,13 +133,15 @@ Saída esperada:
 XML gerado: output/MainT.xml
 ```
 
+> Os XMLs gerados são salvos na pasta `output/` do projeto.
+
 ---
 
 
 ## 📌 Observações
 
 * O diretório `output/` contém apenas arquivos produzidos pelo próprio compilador
-* Os arquivos em `nand2tetris/` são a referência oficial de validação
+* Os arquivos em `expected-output-nand2tetris/` são a referência oficial de validação
 
 ---
 
