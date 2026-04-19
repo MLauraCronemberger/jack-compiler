@@ -56,6 +56,79 @@ private Token consume(TokenType type, String message) {
     );
 }
 
+// Verifica keyword por lexeme (não só por tipo)
+private boolean checkKeyword(String word) {
+    Token t = peek();
+    return t != null && t.getType() == TokenType.KEYWORD && t.getLexeme().equals(word);
+}
+
+// Para consumir um tipo específico (int, char, boolean, ou className)
+private void parseType() {
+    Token t = peek();
+    if (t.getType() == TokenType.KEYWORD &&
+        (t.getLexeme().equals("int") || t.getLexeme().equals("char") || t.getLexeme().equals("boolean"))) {
+        xml.writeToken(advance());
+    } else if (t.getType() == TokenType.IDENTIFIER) {
+        xml.writeToken(advance());  // className
+    } else {
+        throw new RuntimeException("Tipo esperado, encontrado: " + t.getLexeme());
+    }
+}
+
+public void parseClass() {
+    xml.openTag("class");
+    consume(TokenType.KEYWORD, "Esperado 'class'");   // class
+    consume(TokenType.IDENTIFIER, "Esperado nome da classe"); // className
+    consume(TokenType.SYMBOL, "Esperado '{'");        // {
+
+    while (check(TokenType.KEYWORD) &&
+           (peek().getLexeme().equals("static") || peek().getLexeme().equals("field"))) {
+        parseClassVarDec();
+    }
+
+    while (check(TokenType.KEYWORD) &&
+           (peek().getLexeme().equals("constructor") ||
+            peek().getLexeme().equals("function") ||
+            peek().getLexeme().equals("method"))) {
+        parseSubroutineDec();
+    }
+
+    consume(TokenType.SYMBOL, "Esperado '}'");        // }
+    xml.closeTag("class");
+}
+
+// Auxiliar: consume uma keyword específica pelo lexeme
+private Token consumeKeyword(String word) {
+    Token t = peek();
+    if (t != null && t.getType() == TokenType.KEYWORD && t.getLexeme().equals(word)) {
+        xml.writeToken(t);
+        return advance();
+    }
+    throw new RuntimeException(
+        "Esperado keyword '" + word + "' | Encontrado: " +
+        (t != null ? t.getLexeme() : "EOF")
+    );
+}
+
+// Auxiliar: consume um símbolo específico pelo lexeme
+private Token consumeSymbol(String symbol) {
+    Token t = peek();
+    if (t != null && t.getType() == TokenType.SYMBOL && t.getLexeme().equals(symbol)) {
+        xml.writeToken(t);
+        return advance();
+    }
+    throw new RuntimeException(
+        "Esperado símbolo '" + symbol + "' | Encontrado: " +
+        (t != null ? t.getLexeme() : "EOF")
+    );
+}
+
+
+
+
+
+
+
     
 
     
