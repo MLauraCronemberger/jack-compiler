@@ -15,6 +15,10 @@ public class Token {
         this.line = line;
     }
 
+    public String getLexeme() {
+    return lexeme;
+}
+
     private String escapeXML(String text) {
     return text
         .replace("&", "&amp;")
