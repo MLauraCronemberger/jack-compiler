@@ -216,19 +216,35 @@ private void parseSubroutineBody() {
 private void parseStatements() {
     xml.openTag("statements");
 
-    while (checkKeyword("return")) {
-        parseReturn();
+    while (checkKeyword("let") || checkKeyword("if") ||
+           checkKeyword("while") || checkKeyword("do") ||
+           checkKeyword("return")) {
+        parseStatement();
     }
 
     xml.closeTag("statements");
 }
 
+private void parseStatement() {
+    if (checkKeyword("let"))    parseLet();
+    else if (checkKeyword("if"))     parseIf();
+    else if (checkKeyword("while"))  parseWhile();
+    else if (checkKeyword("do"))     parseDo();
+    else if (checkKeyword("return")) parseReturn();
+}
+
+
 private void parseReturn() {
     xml.openTag("returnStatement");
 
     consumeKeyword("return");
-    consumeSymbol(";");
 
+    // expressão opcional: se não for ';', tem expressão
+    if (!checkSymbol(";")) {
+        parseExpression(); // stub Fase 4
+    }
+
+    consumeSymbol(";");
     xml.closeTag("returnStatement");
 }
 
@@ -264,6 +280,113 @@ private void parseVarDec() {
 
     consumeSymbol(";");
     xml.closeTag("varDec");
+}
+
+private void parseLet() {
+    xml.openTag("letStatement");
+
+    consumeKeyword("let");
+    consume(TokenType.IDENTIFIER, "Esperado nome de variável");
+
+    // acesso a array opcional: '[' expression ']'
+    if (checkSymbol("[")) {
+        consumeSymbol("[");
+        parseExpression(); // stub Fase 4
+        consumeSymbol("]");
+    }
+
+    consumeSymbol("=");
+    parseExpression(); // stub Fase 4
+    consumeSymbol(";");
+
+    xml.closeTag("letStatement");
+}
+
+private void parseIf() {
+    xml.openTag("ifStatement");
+
+    consumeKeyword("if");
+    consumeSymbol("(");
+    parseExpression(); // stub Fase 4
+    consumeSymbol(")");
+    consumeSymbol("{");
+    parseStatements();
+    consumeSymbol("}");
+
+    // else é opcional
+    if (checkKeyword("else")) {
+        consumeKeyword("else");
+        consumeSymbol("{");
+        parseStatements();
+        consumeSymbol("}");
+    }
+
+    xml.closeTag("ifStatement");
+}
+
+private void parseWhile() {
+    xml.openTag("whileStatement");
+
+    consumeKeyword("while");
+    consumeSymbol("(");
+    parseExpression(); // stub Fase 4
+    consumeSymbol(")");
+    consumeSymbol("{");
+    parseStatements();
+    consumeSymbol("}");
+
+    xml.closeTag("whileStatement");
+}
+
+private void parseDo() {
+    xml.openTag("doStatement");
+
+    consumeKeyword("do");
+    parseSubroutineCall(); // stub Fase 4
+    consumeSymbol(";");
+
+    xml.closeTag("doStatement");
+}
+
+private void parseExpression() {
+    xml.openTag("expression");
+    parseTerm(); // stub
+    xml.closeTag("expression");
+}
+
+private void parseTerm() {
+    xml.openTag("term");
+    advanceAndWrite(); // consume um token qualquer por enquanto
+    xml.closeTag("term");
+}
+
+private void parseSubroutineCall() {
+    // consome: name ( '(' expressionList ')' | '.' name '(' expressionList ')' )
+    consume(TokenType.IDENTIFIER, "Esperado nome");
+
+    if (checkSymbol(".")) {
+        consumeSymbol(".");
+        consume(TokenType.IDENTIFIER, "Esperado nome do método");
+    }
+
+    consumeSymbol("(");
+    parseExpressionList(); // stub
+    consumeSymbol(")");
+}
+
+private void parseExpressionList() {
+    xml.openTag("expressionList");
+
+    if (!checkSymbol(")")) {
+        parseExpression();
+
+        while (checkSymbol(",")) {
+            consumeSymbol(",");
+            parseExpression();
+        }
+    }
+
+    xml.closeTag("expressionList");
 }
 
 

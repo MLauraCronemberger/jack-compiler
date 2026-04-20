@@ -1,0 +1,16 @@
+class Main {
+    function void main() {
+        var int x;
+        let x = 0;
+        while (x) {
+            do Output.printInt(x);
+            let x = 0;
+        }
+        if (x) {
+            return;
+        } else {
+            return;
+        }
+        return;
+    }
+}
