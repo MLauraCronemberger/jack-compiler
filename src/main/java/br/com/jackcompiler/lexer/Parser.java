@@ -350,14 +350,18 @@ private void parseDo() {
 
 private void parseExpression() {
     xml.openTag("expression");
-    parseTerm(); // stub
-    xml.closeTag("expression");
-}
 
-private void parseTerm() {
-    xml.openTag("term");
-    advanceAndWrite(); // consume um token qualquer por enquanto
-    xml.closeTag("term");
+    parseTerm();
+
+    // op: + - * / & | < > =
+    while (checkSymbol("+") || checkSymbol("-") || checkSymbol("*") ||
+           checkSymbol("/") || checkSymbol("&") || checkSymbol("|") ||
+           checkSymbol("<") || checkSymbol(">") || checkSymbol("=")) {
+        advanceAndWrite(); // consome o operador
+        parseTerm();
+    }
+
+    xml.closeTag("expression");
 }
 
 private void parseSubroutineCall() {
@@ -374,6 +378,7 @@ private void parseSubroutineCall() {
     consumeSymbol(")");
 }
 
+
 private void parseExpressionList() {
     xml.openTag("expressionList");
 
@@ -388,6 +393,66 @@ private void parseExpressionList() {
 
     xml.closeTag("expressionList");
 }
+
+
+private void parseTerm() {
+    xml.openTag("term");
+
+    Token t = peek();
+
+    if (t.getType() == TokenType.INTEGER_CONSTANT) {
+        advanceAndWrite();
+
+    } else if (t.getType() == TokenType.STRING_CONSTANT) {
+        advanceAndWrite();
+
+    } else if (isKeywordConstant(t)) {
+        // true | false | null | this
+        advanceAndWrite();
+
+    } else if (checkSymbol("(")) {
+        // '(' expression ')'
+        consumeSymbol("(");
+        parseExpression();
+        consumeSymbol(")");
+
+    } else if (checkSymbol("-") || checkSymbol("~")) {
+        // unaryOp term
+        advanceAndWrite();
+        parseTerm();
+
+    } else if (t.getType() == TokenType.IDENTIFIER) {
+        // LOOKAHEAD: olha o token seguinte sem avançar
+        Token next = tokens.get(current + 1);
+
+        if (next.getLexeme().equals("[")) {
+            // varName '[' expression ']'
+            advanceAndWrite();           // varName
+            consumeSymbol("[");
+            parseExpression();
+            consumeSymbol("]");
+
+        } else if (next.getLexeme().equals("(") || next.getLexeme().equals(".")) {
+            // subroutineCall
+            parseSubroutineCall();
+
+        } else {
+            // varName simples
+            advanceAndWrite();
+        }
+    }
+
+    xml.closeTag("term");
+}
+
+private boolean isKeywordConstant(Token t) {
+    if (t.getType() != TokenType.KEYWORD) return false;
+    String l = t.getLexeme();
+    return l.equals("true") || l.equals("false") ||
+           l.equals("null") || l.equals("this");
+}
+
+
 
 
 
