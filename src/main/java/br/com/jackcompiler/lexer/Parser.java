@@ -199,16 +199,14 @@ private void parseSubroutineDec() {
 
 // ── STUBS para a Fase 2 ─────────────────────────────────────────────────────
 
-private void parseParameterList() {
-    xml.openTag("parameterList");
-    // TODO: Fase 2
-    xml.closeTag("parameterList");
-}
-
 private void parseSubroutineBody() {
     xml.openTag("subroutineBody");
     consumeSymbol("{"); // <-- ISSO FALTAVA
-    // ainda não temos varDec, então ignora por enquanto
+
+        // zero ou mais declarações de variável
+    while (checkKeyword("var")) {
+        parseVarDec();
+    }
 
     parseStatements(); // precisa existir
     consumeSymbol("}"); // <-- ISSO TAMBÉM
@@ -233,6 +231,42 @@ private void parseReturn() {
 
     xml.closeTag("returnStatement");
 }
+
+private void parseParameterList() {
+    xml.openTag("parameterList");
+
+    // Se o próximo token não é ')', há parâmetros
+    if (!checkSymbol(")")) {
+        parseType();
+        consume(TokenType.IDENTIFIER, "Esperado nome do parâmetro");
+
+        while (checkSymbol(",")) {
+            consumeSymbol(",");
+            parseType();
+            consume(TokenType.IDENTIFIER, "Esperado nome do parâmetro");
+        }
+    }
+
+    xml.closeTag("parameterList");
+}
+
+private void parseVarDec() {
+    xml.openTag("varDec");
+
+    consumeKeyword("var");
+    parseType();
+    consume(TokenType.IDENTIFIER, "Esperado nome de variável");
+
+    while (checkSymbol(",")) {
+        consumeSymbol(",");
+        consume(TokenType.IDENTIFIER, "Esperado nome de variável após ','");
+    }
+
+    consumeSymbol(";");
+    xml.closeTag("varDec");
+}
+
+
 
     
 }

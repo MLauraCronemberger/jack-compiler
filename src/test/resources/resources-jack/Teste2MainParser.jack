@@ -1,0 +1,12 @@
+class Main {
+    function void main() {
+        var int x;
+        var String s, t;
+        return;
+    }
+
+    method int soma(int a, int b) {
+        var int resultado;
+        return;
+    }
+}
