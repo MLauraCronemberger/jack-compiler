@@ -123,8 +123,7 @@ SquareGame.jack -> SquareGameT.xml PASSED
 Permite usar o compilador em qualquer arquivo `.jack` via terminal:
 
 ```bash
-java -jar target/jack-compiler.jar \
-  src/test/resources/resources-jack/Main.jack output/MainT.xml
+java -jar target/jack-compiler.jar src/test/resources/resources-jack/Main.jack output/MainT.xml
 ```
 
 Saída esperada:

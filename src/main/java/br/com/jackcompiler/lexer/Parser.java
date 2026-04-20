@@ -133,6 +133,7 @@ public void parseClass() {
         parseSubroutineDec();
     }
 
+    System.out.println("TOKEN ATUAL: " + peek().getLexeme());
     consumeSymbol("}");        // }
     xml.closeTag("class");
 }
@@ -206,8 +207,31 @@ private void parseParameterList() {
 
 private void parseSubroutineBody() {
     xml.openTag("subroutineBody");
-    // TODO: Fase 2
+    consumeSymbol("{"); // <-- ISSO FALTAVA
+    // ainda não temos varDec, então ignora por enquanto
+
+    parseStatements(); // precisa existir
+    consumeSymbol("}"); // <-- ISSO TAMBÉM
     xml.closeTag("subroutineBody");
+}
+
+private void parseStatements() {
+    xml.openTag("statements");
+
+    while (checkKeyword("return")) {
+        parseReturn();
+    }
+
+    xml.closeTag("statements");
+}
+
+private void parseReturn() {
+    xml.openTag("returnStatement");
+
+    consumeKeyword("return");
+    consumeSymbol(";");
+
+    xml.closeTag("returnStatement");
 }
 
     
