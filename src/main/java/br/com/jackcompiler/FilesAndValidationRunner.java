@@ -1,8 +1,10 @@
 package br.com.jackcompiler;
 
+import br.com.jackcompiler.lexer.Parser;
 import br.com.jackcompiler.lexer.Scanner;
 import br.com.jackcompiler.lexer.Token;
 import br.com.jackcompiler.xml.XmlGenerator;
+import br.com.jackcompiler.xml.XmlParserGenerator;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -53,22 +55,52 @@ public class FilesAndValidationRunner {
         return isEqual;
     }
 
-    public static void runAllTests() throws Exception {
+    private static boolean runParserTest(String name) throws Exception {
+    String inputPath  = "src/test/resources/resources-jack/" + name + ".jack";
+    String outputPath = "output/" + name + "P-Teste.xml";
+    String expectedPath = "src/test/resources/expected-output-nand2tetris/" + name + "P.xml";
 
-        int total = 0;
-        int passed = 0;
-
-        if (runTest("Main")) passed++;
-        total++;
-
-        if (runTest("Square")) passed++;
-        total++;
-
-        if (runTest("SquareGame")) passed++;
-        total++;
-
-        System.out.println(passed + "/" + total + " arquivos validados com sucesso!");
+    if (!java.nio.file.Files.exists(Path.of(expectedPath))) {
+        System.out.println(name + " [PARSER] -> arquivo esperado não encontrado, pulando.");
+        return false;
     }
+
+    String code = Files.readString(Path.of(inputPath));
+    Scanner scanner = new Scanner(code);
+    List<Token> tokens = scanner.tokenize();
+
+    XmlParserGenerator xmlGen = new XmlParserGenerator();
+    Parser parser = new Parser(tokens, xmlGen);
+    parser.parseClass();
+
+    Files.createDirectories(Path.of("output"));
+    Files.writeString(Path.of(outputPath), xmlGen.getXml());
+
+    String generated = normalize(Files.readString(Path.of(outputPath)));
+    String expected  = normalize(Files.readString(Path.of(expectedPath)));
+
+    boolean ok = generated.equals(expected);
+    System.out.println(name + ".jack -> " + name + "P.xml " + (ok ? "PASSED" : "FAILED"));
+    return ok;
+}
+
+    public static void runAllTests() throws Exception {
+    int total = 0, passed = 0;
+
+    // testes do scanner (já existentes)
+    if (runTest("Main"))       passed++; total++;
+    if (runTest("Square"))     passed++; total++;
+    if (runTest("SquareGame")) passed++; total++;
+
+    System.out.println("--- Parser ---");
+
+    // testes do parser
+    if (runParserTest("Main"))       passed++; total++;
+    if (runParserTest("Square"))     passed++; total++;
+    if (runParserTest("SquareGame")) passed++; total++;
+
+    System.out.println(passed + "/" + total + " testes passaram.");
+}
 
 
     public static void main(String[] args) throws Exception {
