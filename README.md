@@ -1,20 +1,17 @@
-# 🧠 Jack Compiler - Analisador Léxico (Nand2Tetris)
+# 🧠 Jack Compiler — Analisador Léxico e Sintático (Nand2Tetris)
 
-Este projeto implementa um **analisador léxico (lexer)** para a linguagem **Jack**, proposta no projeto **Nand2Tetris**.
+Este projeto implementa um **compilador** para a linguagem **Jack**, proposta no projeto **Nand2Tetris**.
 
-O sistema, feito na linguagem **Java**, lê arquivos `.jack`, gera seus respectivos tokens e exporta a saída em formato **XML**, seguindo o padrão oficial do projeto.
+Desenvolvido em **Java**, o sistema cobre os dois primeiros estágios da compilação:
 
----
+- **Análise Léxica (Scanner):** lê arquivos `.jack`, reconhece tokens e exporta em XML
+- **Análise Sintática (Parser):** consome os tokens e gera a árvore sintática em XML, seguindo a gramática oficial Jack
 
-## 🎯 Objetivo
-
-Este projeto faz parte da construção de um compilador completo para a linguagem Jack, sendo o **primeiro estágio: análise léxica**.
+A saída de ambos os estágios é validada contra os arquivos XML oficiais do nand2tetris.
 
 ---
 
 ## 📁 Estrutura do Projeto
-
-A organização do projeto está dividida da seguinte forma:
 
 ```
 jack-compiler/
@@ -23,75 +20,52 @@ jack-compiler/
 │   ├── main/
 │   │   └── java/
 │   │       └── br/com/jackcompiler/
-│   │           ├── Main.java                      🔹Ponto de entrada da aplicação (execução manual e testes)
-│   │           ├── FilesAndValidationRunner.java  🔹Executa os testes e valida a saída com os XMLs de referência
+│   │           ├── Main.java                      🔹 Ponto de entrada (execução manual e testes integrados)
+│   │           ├── FilesAndValidationRunner.java  🔹 Roda e valida scanner + parser contra o gabarito oficial
 │   │           │
-│   │           ├── lexer/                         🔹Implementação do analisador léxico
-│   │           │   ├── Scanner.java
-│   │           │   ├── Token.java
-│   │           │   └── TokenType.java
+│   │           ├── lexer/                         🔹 Analisador léxico e sintático
+│   │           │   ├── TokenType.java             🔹 Enum dos tipos de token
+│   │           │   ├── Token.java                 🔹 Representação de um token
+│   │           │   ├── Scanner.java               🔹 Tokenizador da linguagem Jack
+│   │           │   └── Parser.java                🔹 Parser seguindo a gramática oficial Jack
 │   │           │
-│   │           └── xml/                           🔹Responsável pela geração da saída em XML
-│   │               └── XmlGenerator.java
+│   │           └── xml/                           🔹 Geração da saída XML
+│   │               ├── XmlGenerator.java          🔹 XML do Scanner
+│   │               └── XmlParserGenerator.java    🔹 XML do Parser
 │   │
 │   └── test/
+│       ├── java/
+│       │   └── br/com/jackcompiler/
+│       │       ├── ScannerTest.java               🔹 Testes unitários do analisador léxico (JUnit 5)
+│       │       └── ParserTest.java                🔹 Testes unitários do analisador sintático (JUnit 5)
+│       │
 │       └── resources/
-│           ├── expected-output-nand2tetris/       🔹XMLs oficiais do nand2tetris usados como referência para validação
-│           │   ├── MainT.xml
-│           │   ├── SquareT.xml
-│           │   └── SquareGameT.xml
+│           ├── expected-output-nand2tetris/       🔹 XMLs oficiais usados como gabarito
+│           │   ├── MainT.xml / MainP.xml
+│           │   ├── SquareT.xml / SquareP.xml
+│           │   └── SquareGameT.xml / SquareGameP.xml
 │           │
-│           └── resources-jack/                    🔹Arquivos .jack usados como entrada nos testes
+│           └── resources-jack/                    🔹 Arquivos .jack de entrada
 │               ├── Main.jack
 │               ├── Square.jack
 │               └── SquareGame.jack
 │
-│
-├── output/                        🔹XMLs gerados pelo compilador para comparação e validação
-│
-├── pom.xml                        🔹Arquivo de configuração do Maven (build, compilação e execução)
-│
-├── README.md                      🔹Documentação do projeto
-│
-└── .gitignore                     🔹Arquivos e pastas ignorados pelo Git
-
+├── output/          🔹 XMLs gerados pelo compilador (criados em tempo de execução)
+├── pom.xml          🔹 Configuração Maven (dependências, build, plugins)
+├── README.md
+└── .gitignore
 ```
----
-
-## ⚙️ Funcionalidades
-
-✔ Tokenização completa da linguagem Jack  
-✔ Identificação de:  
-
-* Keywords
-* Symbols
-* Integer constants
-* String constants
-* Identifiers
-
-✔ Geração de saída XML no padrão oficial  
-✔ Validação com arquivos do Nand2Tetris  
-
----
-
-## 🧪 Sobre os testes
-
-O projeto utiliza duas abordagens:
-
-* **FilesAndValidationRunner** → gera os tokens dos arquivos .jack e valida com o padrão oficial
-* **Main** → execução livre (modo usuário)
 
 ---
 
 ## 🚀 Como executar
 
-### ☕ Via Maven (recomendado)
+### Pré-requisitos
 
-* Não é necessário compilar manualmente com javac  
-* O Maven gerencia build e empacotamento automaticamente  
-* Pré-requisitos: ter `Java 17+` e `Maven` instalados  
+- Java 17+
+- Maven 3.6+
 
-#### 🔹 1. Build do projeto
+### Build
 
 ```bash
 mvn clean package
@@ -99,9 +73,9 @@ mvn clean package
 
 ---
 
-#### 🔹 2. Rodar todos os testes e validar com o Nand2Tetris
+### Modo 1 — Rodar todos os testes de integração
 
-Lê os arquivos `.jack` oficiais, gera os XMLs e compara com o gabarito:
+Lê os três arquivos `.jack` oficiais, gera os XMLs de scanner e parser e compara com o gabarito:
 
 ```bash
 java -jar target/jack-compiler.jar
@@ -113,14 +87,24 @@ Saída esperada:
 Main.jack -> MainT.xml PASSED
 Square.jack -> SquareT.xml PASSED
 SquareGame.jack -> SquareGameT.xml PASSED
-3/3 arquivos validados com sucesso!
+--- Parser ---
+Main.jack -> MainP.xml PASSED
+Square.jack -> SquareP.xml PASSED
+SquareGame.jack -> SquareGameP.xml PASSED
+6/6 testes passaram.
 ```
+
+Os XMLs gerados ficam em `output/` com sufixo `-Teste`.
 
 ---
 
-#### 🔹 3. Compilar um arquivo `.jack` manualmente
+### Modo 2 — Gerar XML do Scanner para um arquivo `.jack`
 
-Permite usar o compilador em qualquer arquivo `.jack` via terminal:
+```bash
+java -jar target/jack-compiler.jar <arquivo.jack> <saida.xml>
+```
+
+Exemplo:
 
 ```bash
 java -jar target/jack-compiler.jar src/test/resources/resources-jack/Main.jack output/MainT.xml
@@ -132,15 +116,59 @@ Saída esperada:
 XML gerado: output/MainT.xml
 ```
 
-Os XMLs gerados são salvos na pasta `output/` do projeto.
+---
+
+### Modo 3 — Gerar XML do Parser para um arquivo `.jack`
+
+```bash
+java -jar target/jack-compiler.jar --parser <arquivo.jack> <saida.xml>
+```
+
+Exemplo:
+
+```bash
+java -jar target/jack-compiler.jar --parser src/test/resources/resources-jack/Main.jack output/MainP.xml
+```
+
+Saída esperada:
+
+```
+XML gerado: output/MainP.xml
+```
 
 ---
 
+### Modo 4 — Rodar os testes unitários (JUnit 5)
+
+```bash
+mvn test
+```
+
+Saída esperada:
+
+```
+Tests run: 59, Failures: 0, Errors: 0, Skipped: 0
+
+Results:
+Tests run: 59, Failures: 0, Errors: 0, Skipped: 0
+
+BUILD SUCCESS
+```
+
+Os testes cobrem:
+
+| Classe | Testes | O que cobre |
+|---|---|---|
+| `ScannerTest` | 23 | Keywords, identificadores, inteiros, strings, símbolos, comentários, whitespace, escape XML, validação oficial |
+| `ParserTest` | 36 | Estrutura de classe, subrotinas, todos os statements, expressões, erros sintáticos, validação oficial |
+
+---
 
 ## 📌 Observações
 
-* O diretório `output/` contém apenas arquivos produzidos pelo próprio compilador
-* Os arquivos em `expected-output-nand2tetris/` são a referência oficial de validação
+- O diretório `output/` contém apenas arquivos produzidos pelo compilador em tempo de execução
+- Os arquivos em `expected-output-nand2tetris/` são o gabarito oficial e não devem ser modificados
+- A comparação de XMLs normaliza espaços e quebras de linha antes de comparar, evitando falsos negativos por indentação
 
 ---
 
