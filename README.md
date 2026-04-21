@@ -73,7 +73,7 @@ mvn clean package
 
 ---
 
-### Modo 1 — Rodar todos os testes de integração
+### 🔹 Modo 1 — Rodar todos os testes de integração
 
 Lê os três arquivos `.jack` oficiais, gera os XMLs de scanner e parser e compara com o gabarito:
 
@@ -98,7 +98,7 @@ Os XMLs gerados ficam em `output/` com sufixo `-Teste`.
 
 ---
 
-### Modo 2 — Gerar XML do Scanner para um arquivo `.jack`
+### 🔹 Modo 2 — Gerar XML do Scanner para um arquivo `.jack`
 
 ```bash
 java -jar target/jack-compiler.jar <arquivo.jack> <saida.xml>
@@ -118,7 +118,7 @@ XML gerado: output/MainT.xml
 
 ---
 
-### Modo 3 — Gerar XML do Parser para um arquivo `.jack`
+### 🔹 Modo 3 — Gerar XML do Parser para um arquivo `.jack`
 
 ```bash
 java -jar target/jack-compiler.jar --parser <arquivo.jack> <saida.xml>
@@ -138,7 +138,7 @@ XML gerado: output/MainP.xml
 
 ---
 
-### Modo 4 — Rodar os testes unitários (JUnit 5)
+### 🔹 Modo 4 — Rodar os testes unitários (JUnit 5)
 
 ```bash
 mvn test
