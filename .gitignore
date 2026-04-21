@@ -11,3 +11,4 @@ target/
 
 # sistema
 .DS_Store
+.settings/

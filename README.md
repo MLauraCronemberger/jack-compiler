@@ -65,7 +65,7 @@ jack-compiler/
 - Java 17+
 - Maven 3.6+
 
-### Build
+### 🔹 Build
 
 ```bash
 mvn clean package
