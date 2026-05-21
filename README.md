@@ -1,13 +1,15 @@
-# 🧠 Jack Compiler — Analisador Léxico e Sintático (Nand2Tetris)
+# 🧠 Jack Compiler — Compilador para a Linguagem Jack (Nand2Tetris)
 
-Este projeto implementa um **compilador** para a linguagem **Jack**, proposta no projeto **Nand2Tetris**.
+Este projeto implementa um **compilador completo** para a linguagem **Jack**, proposta no projeto **Nand2Tetris**.
 
-Desenvolvido em **Java**, o sistema cobre os dois primeiros estágios da compilação:
+Desenvolvido em **Java**, o sistema cobre todos os estágios da compilação — da leitura do código-fonte até a geração de código intermediário executável na máquina virtual do nand2tetris:
 
 - **Análise Léxica (Scanner):** lê arquivos `.jack`, reconhece tokens e exporta em XML
-- **Análise Sintática (Parser):** consome os tokens e gera a árvore sintática em XML, seguindo a gramática oficial Jack
+- **Análise Sintática (Parser):** consome os tokens e verifica a estrutura do programa seguindo a gramática oficial Jack, gerando a árvore sintática em XML
+- **Tabela de Símbolos (SymbolTable):** registra cada variável declarada com seu tipo, escopo e posição de memória — a memória do compilador sobre o programa
+- **Geração de Código VM (VMWriter):** traduz cada construção do programa Jack em instruções da linguagem intermediária `.vm`, compatível com o VM Emulator oficial do curso
 
-A saída de ambos os estágios é validada contra os arquivos XML oficiais do nand2tetris.
+A saída dos estágios de análise é validada contra os arquivos XML oficiais do nand2tetris. A saída do gerador de código é validada executando os programas do **Project 11** no VM Emulator.
 
 ---
 
