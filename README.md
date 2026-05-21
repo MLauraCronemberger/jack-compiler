@@ -11,6 +11,84 @@ A saída de ambos os estágios é validada contra os arquivos XML oficiais do na
 
 ---
 
+## 🔍 Como o compilador funciona
+ 
+O código-fonte Jack passa por três estágios em sequência antes de virar código executável:
+ 
+```
+Arquivo .jack
+     │
+     ▼
+┌─────────────────────────────────────────────┐
+│  1. SCANNER (Analisador Léxico)             │
+│                                             │
+│  Lê o texto caractere por caractere e       │
+│  agrupa em tokens com tipo e valor.         │
+│                                             │
+│  "let x = 10 + y;"                         │
+│   → [let] [x] [=] [10] [+] [y] [;]        │
+└─────────────────┬───────────────────────────┘
+                  │ lista de tokens
+                  ▼
+┌─────────────────────────────────────────────┐
+│  2. PARSER (Analisador Sintático)           │
+│                                             │
+│  Consome os tokens e verifica se a          │
+│  estrutura respeita a gramática Jack.       │
+│  Percorre: classe → subrotinas →            │
+│  statements → expressões                   │
+│                                             │
+│  Ao mesmo tempo, alimenta a SymbolTable     │
+│  com cada variável declarada.               │
+└──────┬──────────────────────┬───────────────┘
+       │                      │
+       ▼                      ▼
+┌─────────────┐     ┌─────────────────────────┐
+│ XML gerado  │     │  3. GERADOR DE CÓDIGO   │
+│ (debug /    │     │                         │
+│  gabarito)  │     │  SymbolTable            │
+└─────────────┘     │  Guarda cada variável   │
+                    │  com tipo, escopo e      │
+                    │  índice de memória.      │
+                    │                         │
+                    │  VMWriter               │
+                    │  Emite os comandos VM   │
+                    │  para cada construção   │
+                    │  encontrada pelo parser.│
+                    └────────────┬────────────┘
+                                 │
+                                 ▼
+                        Arquivo .vm gerado
+                    (compatível com VM Emulator)
+```
+ 
+### O que cada parte faz
+ 
+- **Scanner** — transforma texto bruto em tokens. Sabe distinguir keyword (`if`, `while`, `class`) de identificador (`x`, `Point`), número inteiro, string, e símbolo (`{`, `+`, `[`).
+ 
+- **Parser** — percorre a sequência de tokens seguindo a gramática oficial Jack. Garante que a estrutura está correta (ex: todo `if` tem `(`, expressão, `)`, `{`, statements, `}`). É o maestro: chama o Scanner, a SymbolTable e o VMWriter.
+ 
+- **SymbolTable** — funciona como dicionário de variáveis. Para cada variável declarada, guarda nome, tipo, categoria (`field`, `static`, `arg`, `local`) e índice. Tem dois escopos simultâneos: o da classe (dura a classe toda) e o da subrotina (reseta a cada método ou função). Quando o parser encontra uma variável numa expressão, consulta a SymbolTable para saber qual segmento e índice usar na VM.
+ 
+- **VMWriter** — é a caneta. Não tem lógica de compilação — só sabe formatar as instruções da linguagem VM (`push`, `pop`, `call`, `label`, `if-goto`, etc.) e acumular tudo numa string que vira o arquivo `.vm`.
+ 
+### Exemplo 
+ 
+O seguinte código Jack:
+```jack
+let x = 10 + y;
+```
+ 
+Passa pelo Scanner e vira tokens. O Parser reconhece um `letStatement`. A SymbolTable diz que `x` é `local 0` e `y` é `local 1`. O VMWriter emite:
+```
+push constant 10
+push local 1
+add
+pop local 0
+```
+ 
+---
+
 ## 📁 Estrutura do Projeto
 
 ```
