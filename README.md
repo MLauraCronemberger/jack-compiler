@@ -11,6 +11,67 @@ A saída de ambos os estágios é validada contra os arquivos XML oficiais do na
 
 ---
 
+## 📁 Estrutura do Projeto
+
+```
+jack-compiler/
+│
+├── src/
+│   ├── main/
+│   │   └── java/
+│   │       └── br/com/jackcompiler/
+│   │           ├── Main.java                      🔹 Ponto de entrada (execução manual e testes integrados)
+│   │           ├── FilesAndValidationRunner.java  🔹 Roda e valida scanner + parser contra o gabarito oficial
+│   │           │
+│   │           ├── lexer/                         🔹 Analisador léxico e sintático
+│   │           │   ├── TokenType.java             🔹 Enum dos tipos de token
+│   │           │   ├── Token.java                 🔹 Representação de um token
+│   │           │   ├── Scanner.java               🔹 Tokenizador da linguagem Jack
+│   │           │   └── Parser.java                🔹 Parser + gerador de código VM integrado
+│   │           │
+│   │           ├── compiler/                      🔹 Geração de código intermediário (VM)
+│   │           │   ├── SymbolTable.java           🔹 Tabela de símbolos com escopos de classe e subrotina
+│   │           │   └── VMWriter.java              🔹 Emissor de comandos da linguagem VM
+│   │           │
+│   │           └── xml/                           🔹 Geração da saída XML
+│   │               ├── XmlGenerator.java          🔹 XML do Scanner
+│   │               └── XmlParserGenerator.java    🔹 XML do Parser
+│   │
+│   └── test/
+│       ├── java/
+│       │   └── br/com/jackcompiler/
+│       │       ├── ScannerTest.java               🔹 Testes unitários do analisador léxico (JUnit 5)
+│       │       ├── ParserTest.java                🔹 Testes unitários do analisador sintático (JUnit 5)
+│       │       ├── SymbolTableTest.java           🔹 Testes unitários da tabela de símbolos (JUnit 5)
+│       │       └── VMWriterTest.java              🔹 Testes unitários do emissor de código VM (JUnit 5)
+│       │
+│       └── resources/
+│           ├── expected-output-nand2tetris/       🔹 XMLs oficiais usados como gabarito
+│           │   ├── MainT.xml / MainP.xml
+│           │   ├── SquareT.xml / SquareP.xml
+│           │   └── SquareGameT.xml / SquareGameP.xml
+│           │
+│           └── resources-jack/                    🔹 Arquivos .jack de entrada
+│               ├── Main.jack
+│               ├── Square.jack
+│               └── SquareGame.jack
+│
+├── projects/
+│   └── 11/                                        🔹 Programas oficiais do Project 11 (nand2tetris)
+│       ├── Seven/         └── Main.jack
+│       ├── Average/       └── Main.jack
+│       ├── ConvertToBin/  └── Main.jack
+│       ├── ComplexArrays/ └── Main.jack
+│       ├── Square/        ├── Main.jack, Square.jack, SquareGame.jack
+│       └── Pong/          ├── Ball.jack, Bat.jack, Main.jack, PongGame.jack
+│
+├── output/          🔹 XMLs gerados pelo compilador (criados em tempo de execução)
+├── pom.xml          🔹 Configuração Maven (dependências, build, plugins)
+├── README.md
+└── .gitignore
+```
+---
+
 ## 🔍 Como o compilador funciona
  
 O código-fonte Jack passa por três estágios em sequência antes de virar código executável:
@@ -87,52 +148,6 @@ add
 pop local 0
 ```
  
----
-
-## 📁 Estrutura do Projeto
-
-```
-jack-compiler/
-│
-├── src/
-│   ├── main/
-│   │   └── java/
-│   │       └── br/com/jackcompiler/
-│   │           ├── Main.java                      🔹 Ponto de entrada (execução manual e testes integrados)
-│   │           ├── FilesAndValidationRunner.java  🔹 Roda e valida scanner + parser contra o gabarito oficial
-│   │           │
-│   │           ├── lexer/                         🔹 Analisador léxico e sintático
-│   │           │   ├── TokenType.java             🔹 Enum dos tipos de token
-│   │           │   ├── Token.java                 🔹 Representação de um token
-│   │           │   ├── Scanner.java               🔹 Tokenizador da linguagem Jack
-│   │           │   └── Parser.java                🔹 Parser seguindo a gramática oficial Jack
-│   │           │
-│   │           └── xml/                           🔹 Geração da saída XML
-│   │               ├── XmlGenerator.java          🔹 XML do Scanner
-│   │               └── XmlParserGenerator.java    🔹 XML do Parser
-│   │
-│   └── test/
-│       ├── java/
-│       │   └── br/com/jackcompiler/
-│       │       ├── ScannerTest.java               🔹 Testes unitários do analisador léxico (JUnit 5)
-│       │       └── ParserTest.java                🔹 Testes unitários do analisador sintático (JUnit 5)
-│       │
-│       └── resources/
-│           ├── expected-output-nand2tetris/       🔹 XMLs oficiais usados como gabarito
-│           │   ├── MainT.xml / MainP.xml
-│           │   ├── SquareT.xml / SquareP.xml
-│           │   └── SquareGameT.xml / SquareGameP.xml
-│           │
-│           └── resources-jack/                    🔹 Arquivos .jack de entrada
-│               ├── Main.jack
-│               ├── Square.jack
-│               └── SquareGame.jack
-│
-├── output/          🔹 XMLs gerados pelo compilador (criados em tempo de execução)
-├── pom.xml          🔹 Configuração Maven (dependências, build, plugins)
-├── README.md
-└── .gitignore
-```
 
 ---
 
