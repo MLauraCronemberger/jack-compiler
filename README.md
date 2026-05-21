@@ -231,30 +231,62 @@ XML gerado: output/MainP.xml
 
 ---
 
-### 🔹 Modo 4 — Rodar os testes unitários (JUnit 5)
-
+### 🔹 Modo 4 — Compilar para código VM (arquivo único)
+ 
+```bash
+java -jar target/jack-compiler.jar --vm <arquivo.jack>
+```
+ 
+Exemplo:
+ 
+```bash
+java -jar target/jack-compiler.jar --vm projects/11/Seven/Main.jack
+```
+ 
+Gera `Main.vm` no mesmo diretório do `.jack`.
+ 
+---
+ 
+### 🔹 Modo 5 — Compilar para código VM (diretório inteiro)
+ 
+```bash
+java -jar target/jack-compiler.jar --vm <diretório>
+```
+ 
+Exemplos:
+ 
+```bash
+java -jar target/jack-compiler.jar --vm projects/11/Square/
+java -jar target/jack-compiler.jar --vm projects/11/Pong/
+```
+ 
+Gera um `.vm` para cada `.jack` encontrado na pasta, no mesmo diretório.
+ 
+---
+ 
+### 🔹 Modo 6 — Rodar os testes unitários (JUnit 5)
+ 
 ```bash
 mvn test
 ```
-
+ 
 Saída esperada:
-
+ 
 ```
-Tests run: 59, Failures: 0, Errors: 0, Skipped: 0
-
-Results:
-Tests run: 59, Failures: 0, Errors: 0, Skipped: 0
-
+Tests run: 83, Failures: 0, Errors: 0, Skipped: 0
+ 
 BUILD SUCCESS
 ```
-
+ 
 Os testes cobrem:
-
+ 
 | Classe | Testes | O que cobre |
 |---|---|---|
 | `ScannerTest` | 23 | Keywords, identificadores, inteiros, strings, símbolos, comentários, whitespace, escape XML, validação oficial |
 | `ParserTest` | 36 | Estrutura de classe, subrotinas, todos os statements, expressões, erros sintáticos, validação oficial |
-
+| `SymbolTableTest` | 8 | Escopos de classe e subrotina, índices, resolução de variáveis, reset entre subrotinas |
+| `VMWriterTest` | 16 | Todos os comandos VM: push, pop, aritmética, labels, goto, call, function, return |
+ 
 ---
 
 ## 📌 Observações
