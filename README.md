@@ -289,6 +289,21 @@ Os testes cobrem:
  
 ---
 
+## ✅ Status de validação — Project 11
+ 
+Todos os programas foram compilados com o gerador e executados no VM Emulator oficial do nand2tetris:
+ 
+| Programa | Arquivos | Resultado |
+|---|---|---|
+| Seven | `Main.jack` | ✅ Passou — imprime 7 |
+| Average | `Main.jack` | ✅ Passou |
+| ConvertToBin | `Main.jack` | ✅ Passou |
+| ComplexArrays | `Main.jack` | ✅ Passou |
+| Square | `Main.jack`, `Square.jack`, `SquareGame.jack` | ✅ Passou |
+| Pong | `Ball.jack`, `Bat.jack`, `Main.jack`, `PongGame.jack` | ✅ Passou |
+ 
+---
+
 ## 📌 Observações
 
 - O diretório `output/` contém apenas arquivos produzidos pelo compilador em tempo de execução
