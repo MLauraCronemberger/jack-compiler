@@ -311,6 +311,8 @@ Todos os programas foram compilados com o gerador e executados no VM Emulator of
 - O diretório `output/` contém apenas arquivos produzidos pelo compilador em tempo de execução
 - Os arquivos em `expected-output-nand2tetris/` são o gabarito oficial e não devem ser modificados
 - A comparação de XMLs normaliza espaços e quebras de linha antes de comparar, evitando falsos negativos por indentação
+- Os arquivos `.vm` gerados pelo compilador aparecem no mesmo diretório dos `.jack` de origem — isso é intencional para compatibilidade com o VM Emulator, que espera encontrar todos os `.vm` de um projeto na mesma pasta
+- Os arquivos `.jack` do Project 11 em `projects/11/` são de entrada apenas — os `.vm` gerados a partir deles não são versionados no repositório
 
 ---
 
