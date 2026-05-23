@@ -14,12 +14,11 @@ public class Parser {
     private int current;
     private XmlParserGenerator xml;
 
-    // >>> ADICIONADO: ferramentas do gerador de código
     private SymbolTable symbolTable = new SymbolTable();
     private VMWriter vmWriter = new VMWriter();
-    private String className = "";      // guarda "Main", "Point", etc.
-    private int ifLabelNum = 0;         // garante labels únicos: IF_TRUE0, IF_TRUE1...
-    private int whileLabelNum = 0;      // garante labels únicos: WHILE_EXP0, WHILE_EXP1...
+    private String className = "";      
+    private int ifLabelNum = 0;         
+    private int whileLabelNum = 0;      
 
     public Parser(List<Token> tokens, XmlParserGenerator xml) {
         this.tokens = tokens;
@@ -27,16 +26,11 @@ public class Parser {
         this.xml = xml;
     }
 
-    // >>> ADICIONADO: retorna o código VM gerado (chamado no Main para gravar o .vm)
+    // retorna o código VM gerado (chamado no Main para gravar o .vm)
     public String getVMOutput() {
         return vmWriter.getOutput();
     }
 
-    // >>> ADICIONADO: converte Kind da SymbolTable para Segment da VM
-    // FIELD  → THIS   (campos do objeto ficam no segmento this)
-    // STATIC → STATIC
-    // VAR    → LOCAL
-    // ARG    → ARG
     private Segment kindToSegment(Kind kind) {
         switch (kind) {
             case FIELD:  return Segment.THIS;
@@ -48,7 +42,6 @@ public class Parser {
     }
 
 // ==================== TOKEN UTILS ====================
-// (nenhuma alteração aqui)
 
     private Token peek() {
         if (current < tokens.size()) {
@@ -133,7 +126,6 @@ public class Parser {
     }
 
 // ==================== GRAMMAR HELPERS ====================
-// (nenhuma alteração aqui)
 
     private void parseType() {
         Token t = peek();
@@ -166,12 +158,10 @@ public class Parser {
 
         if (t.getType() == TokenType.INTEGER_CONSTANT) {
             advanceAndWrite();
-            // >>> ADICIONADO: número inteiro → push constant N
             vmWriter.writePush(Segment.CONST, Integer.parseInt(t.getLexeme()));
 
         } else if (t.getType() == TokenType.STRING_CONSTANT) {
             advanceAndWrite();
-            // >>> ADICIONADO: string → aloca com String.new e adiciona char por char
             String str = t.getLexeme();
             vmWriter.writePush(Segment.CONST, str.length());
             vmWriter.writeCall("String.new", 1);
@@ -182,7 +172,6 @@ public class Parser {
 
         } else if (isKeywordConstant(t)) {
             advanceAndWrite();
-            // >>> ADICIONADO: true/false/null/this
             switch (t.getLexeme()) {
                 case "true":
                     vmWriter.writePush(Segment.CONST, 0);
@@ -204,10 +193,10 @@ public class Parser {
             // sem geração de código aqui: a expressão dentro já gerou
 
         } else if (checkSymbol("-") || checkSymbol("~")) {
-            String op = t.getLexeme(); // >>> ADICIONADO: guarda o operador antes de avançar
+            String op = t.getLexeme(); //guarda o operador antes de avançar
             advanceAndWrite();
             parseTerm();
-            // >>> ADICIONADO: operador unário → neg ou not
+            // operador unário → neg ou not
             if (op.equals("-")) vmWriter.writeArithmetic(Command.NEG);
             else                 vmWriter.writeArithmetic(Command.NOT);
 
@@ -215,7 +204,7 @@ public class Parser {
             Token next = tokens.get(current + 1);
 
             if (next.getLexeme().equals("[")) {
-                // >>> ADICIONADO: array[i] → calcula endereço e lê valor
+                //array[i] → calcula endereço e lê valor
                 Token varToken = advance();
                 xml.writeToken(varToken);
                 Symbol sym = symbolTable.resolve(varToken.getLexeme());
@@ -233,7 +222,7 @@ public class Parser {
                 parseSubroutineCall();
 
             } else {
-                // >>> ADICIONADO: variável simples → push do segmento correto
+                //variável simples → push do segmento correto
                 Token varToken = advance();
                 xml.writeToken(varToken);
                 Symbol sym = symbolTable.resolve(varToken.getLexeme());
@@ -254,11 +243,11 @@ public class Parser {
                checkSymbol("/") || checkSymbol("&") || checkSymbol("|") ||
                checkSymbol("<") || checkSymbol(">") || checkSymbol("=")) {
 
-            String op = peek().getLexeme(); // >>> ADICIONADO: guarda operador antes de avançar
+            String op = peek().getLexeme(); //guarda operador antes de avançar
             advanceAndWrite();
             parseTerm();
 
-            // >>> ADICIONADO: emite o comando VM do operador
+            //emite o comando VM do operador
             switch (op) {
                 case "+": vmWriter.writeArithmetic(Command.ADD); break;
                 case "-": vmWriter.writeArithmetic(Command.SUB); break;
@@ -275,7 +264,7 @@ public class Parser {
         xml.closeTag("expression");
     }
 
-    // >>> ADICIONADO: agora retorna int (quantidade de argumentos) em vez de void
+    //agora retorna int (quantidade de argumentos) em vez de void
     private int parseExpressionList() {
         xml.openTag("expressionList");
         int nArgs = 0;
@@ -291,11 +280,11 @@ public class Parser {
         }
 
         xml.closeTag("expressionList");
-        return nArgs; // >>> ADICIONADO: retorna contagem para writeCall
+        return nArgs;
     }
 
     private void parseSubroutineCall() {
-        Token nameToken = advance();  // >>> ADICIONADO: guarda o token (não só avança)
+        Token nameToken = advance();
         xml.writeToken(nameToken);
         String name = nameToken.getLexeme();
 
@@ -303,7 +292,6 @@ public class Parser {
         String functionName;
 
         if (checkSymbol(".")) {
-            // >>> ADICIONADO: Classe.funcao() ou objeto.metodo()
             consumeSymbol(".");
             Token methodToken = consume(TokenType.IDENTIFIER, "Esperado nome do método");
             String methodName = methodToken.getLexeme();
@@ -325,16 +313,14 @@ public class Parser {
             consumeSymbol(")");
 
         } else {
-            // >>> ADICIONADO: chamada sem ponto → método da própria classe
-            // ex: draw() dentro da própria classe
             functionName = className + "." + name;
             consumeSymbol("(");
-            vmWriter.writePush(Segment.POINTER, 0); // empilha 'this'
+            vmWriter.writePush(Segment.POINTER, 0);
             nArgs = parseExpressionList() + 1;
             consumeSymbol(")");
         }
 
-        vmWriter.writeCall(functionName, nArgs); // >>> ADICIONADO
+        vmWriter.writeCall(functionName, nArgs);
     }
 
 
@@ -347,11 +333,11 @@ public class Parser {
         if (!checkSymbol(";")) {
             parseExpression(); // a expressão já empilha o valor de retorno
         } else {
-            vmWriter.writePush(Segment.CONST, 0); // >>> ADICIONADO: void → push 0 por convenção
+            vmWriter.writePush(Segment.CONST, 0);
         }
 
         consumeSymbol(";");
-        vmWriter.writeReturn(); // >>> ADICIONADO
+        vmWriter.writeReturn();
         xml.closeTag("returnStatement");
     }
 
@@ -360,34 +346,33 @@ public class Parser {
         consumeKeyword("do");
         parseSubroutineCall();
         consumeSymbol(";");
-        vmWriter.writePop(Segment.TEMP, 0); // >>> ADICIONADO: descarta retorno (do não usa valor)
+        vmWriter.writePop(Segment.TEMP, 0); 
         xml.closeTag("doStatement");
     }
 
     private void parseWhile() {
         xml.openTag("whileStatement");
 
-        // >>> ADICIONADO: labels únicos para este while
         String labelExp = "WHILE_EXP" + whileLabelNum;
         String labelEnd = "WHILE_END" + whileLabelNum;
         whileLabelNum++;
 
-        vmWriter.writeLabel(labelExp);    // >>> ADICIONADO: início do loop
+        vmWriter.writeLabel(labelExp);    
 
         consumeKeyword("while");
         consumeSymbol("(");
-        parseExpression();                // empilha resultado da condição
+        parseExpression();               
         consumeSymbol(")");
 
-        vmWriter.writeArithmetic(Command.NOT); // >>> ADICIONADO: inverte: sai se condição falsa
-        vmWriter.writeIf(labelEnd);            // >>> ADICIONADO: se ~condição, pula para o fim
+        vmWriter.writeArithmetic(Command.NOT); 
+        vmWriter.writeIf(labelEnd);           
 
         consumeSymbol("{");
         parseStatements();
         consumeSymbol("}");
 
-        vmWriter.writeGoto(labelExp);  // >>> ADICIONADO: volta pro início
-        vmWriter.writeLabel(labelEnd); // >>> ADICIONADO: fim do loop
+        vmWriter.writeGoto(labelExp); 
+        vmWriter.writeLabel(labelEnd); 
 
         xml.closeTag("whileStatement");
     }
@@ -395,7 +380,6 @@ public class Parser {
     private void parseIf() {
         xml.openTag("ifStatement");
 
-        // >>> ADICIONADO: labels únicos para este if
         String labelTrue = "IF_TRUE"  + ifLabelNum;
         String labelFalse = "IF_FALSE" + ifLabelNum;
         String labelEnd   = "IF_END"   + ifLabelNum;
@@ -403,7 +387,7 @@ public class Parser {
 
         consumeKeyword("if");
         consumeSymbol("(");
-        parseExpression();               // empilha resultado da condição
+        parseExpression();             
         consumeSymbol(")");
 
         // >>> ADICIONADO: saltos
@@ -416,15 +400,15 @@ public class Parser {
         consumeSymbol("}");
 
         if (checkKeyword("else")) {
-            vmWriter.writeGoto(labelEnd);    // >>> ADICIONADO: pula o else
-            vmWriter.writeLabel(labelFalse); // >>> ADICIONADO: bloco else começa aqui
+            vmWriter.writeGoto(labelEnd);    // pula o else
+            vmWriter.writeLabel(labelFalse); //bloco else começa aqui
             consumeKeyword("else");
             consumeSymbol("{");
             parseStatements();
             consumeSymbol("}");
-            vmWriter.writeLabel(labelEnd);   // >>> ADICIONADO: fim do if-else
+            vmWriter.writeLabel(labelEnd);   //fim do if-else
         } else {
-            vmWriter.writeLabel(labelFalse); // >>> ADICIONADO: sem else, falso só pula o bloco
+            vmWriter.writeLabel(labelFalse); //sem else, falso só pula o bloco
         }
 
         xml.closeTag("ifStatement");
@@ -435,32 +419,29 @@ public class Parser {
         consumeKeyword("let");
 
         Token varToken = consume(TokenType.IDENTIFIER, "Esperado nome de variável");
-        Symbol sym = symbolTable.resolve(varToken.getLexeme()); // >>> ADICIONADO
+        Symbol sym = symbolTable.resolve(varToken.getLexeme()); 
 
-        boolean isArray = false; // >>> ADICIONADO
+        boolean isArray = false;
 
         if (checkSymbol("[")) {
-            // >>> ADICIONADO: let arr[i] = expr
             isArray = true;
             consumeSymbol("[");
-            parseExpression();                                          // empilha índice
+            parseExpression();                                         
             consumeSymbol("]");
-            vmWriter.writePush(kindToSegment(sym.kind()), sym.index()); // empilha base
-            vmWriter.writeArithmetic(Command.ADD);                       // endereço = base + índice
+            vmWriter.writePush(kindToSegment(sym.kind()), sym.index()); 
+            vmWriter.writeArithmetic(Command.ADD);                       
         }
 
         consumeSymbol("=");
         parseExpression(); // empilha valor do lado direito
 
-        // >>> ADICIONADO: armazena o valor
         if (isArray) {
-            // precisa de temp porque a expressão do lado direito pode ter mudado 'that'
-            vmWriter.writePop(Segment.TEMP, 0);     // guarda valor em temp
-            vmWriter.writePop(Segment.POINTER, 1);  // that = endereço calculado
-            vmWriter.writePush(Segment.TEMP, 0);    // recupera valor
-            vmWriter.writePop(Segment.THAT, 0);     // armazena no array
+            vmWriter.writePop(Segment.TEMP, 0);     
+            vmWriter.writePop(Segment.POINTER, 1);  
+            vmWriter.writePush(Segment.TEMP, 0);    
+            vmWriter.writePop(Segment.THAT, 0);     
         } else {
-            vmWriter.writePop(kindToSegment(sym.kind()), sym.index()); // variável simples
+            vmWriter.writePop(kindToSegment(sym.kind()), sym.index()); 
         }
 
         consumeSymbol(";");
@@ -492,18 +473,18 @@ public class Parser {
         xml.openTag("varDec");
         consumeKeyword("var");
 
-        // >>> ADICIONADO: captura tipo e registra variáveis locais na SymbolTable
+        // captura tipo e registra variáveis locais na SymbolTable
         Token typeToken = peek();
         parseType();
         String type = typeToken.getLexeme();
 
         Token nameToken = consume(TokenType.IDENTIFIER, "Esperado nome de variável");
-        symbolTable.define(nameToken.getLexeme(), type, Kind.VAR); // >>> ADICIONADO
+        symbolTable.define(nameToken.getLexeme(), type, Kind.VAR);
 
         while (checkSymbol(",")) {
             consumeSymbol(",");
             Token nextName = consume(TokenType.IDENTIFIER, "Esperado nome de variável após ','");
-            symbolTable.define(nextName.getLexeme(), type, Kind.VAR); // >>> ADICIONADO
+            symbolTable.define(nextName.getLexeme(), type, Kind.VAR); 
         }
 
         consumeSymbol(";");
@@ -514,13 +495,13 @@ public class Parser {
         xml.openTag("parameterList");
 
         if (!checkSymbol(")")) {
-            // >>> ADICIONADO: captura tipo e registra argumentos na SymbolTable
+            // captura tipo e registra argumentos na SymbolTable
             Token typeToken = peek();
             parseType();
             String type = typeToken.getLexeme();
 
             Token nameToken = consume(TokenType.IDENTIFIER, "Esperado nome do parâmetro");
-            symbolTable.define(nameToken.getLexeme(), type, Kind.ARG); // >>> ADICIONADO
+            symbolTable.define(nameToken.getLexeme(), type, Kind.ARG); 
 
             while (checkSymbol(",")) {
                 consumeSymbol(",");
@@ -529,14 +510,14 @@ public class Parser {
                 type = nextType.getLexeme();
 
                 Token nextName = consume(TokenType.IDENTIFIER, "Esperado nome do parâmetro");
-                symbolTable.define(nextName.getLexeme(), type, Kind.ARG); // >>> ADICIONADO
+                symbolTable.define(nextName.getLexeme(), type, Kind.ARG); 
             }
         }
 
         xml.closeTag("parameterList");
     }
 
-    private void parseSubroutineBody(String functionName, String subroutineType) { // >>> ADICIONADO: parâmetros novos
+    private void parseSubroutineBody(String functionName, String subroutineType) { 
         xml.openTag("subroutineBody");
         consumeSymbol("{");
 
@@ -544,22 +525,21 @@ public class Parser {
             parseVarDec();
         }
 
-        // >>> ADICIONADO: só aqui sabemos quantas variáveis locais tem → escreve function
+        //só aqui sabemos quantas variáveis locais tem → escreve function
         int nLocals = symbolTable.varCount(Kind.VAR);
         vmWriter.writeFunction(functionName, nLocals);
 
-        // >>> ADICIONADO: prologue do construtor — aloca memória para o objeto
         if (subroutineType.equals("constructor")) {
             int nFields = symbolTable.varCount(Kind.FIELD);
             vmWriter.writePush(Segment.CONST, nFields);
             vmWriter.writeCall("Memory.alloc", 1);
-            vmWriter.writePop(Segment.POINTER, 0); // this = novo objeto
+            vmWriter.writePop(Segment.POINTER, 0); 
         }
 
-        // >>> ADICIONADO: prologue do método — aponta this para o objeto recebido
+
         if (subroutineType.equals("method")) {
             vmWriter.writePush(Segment.ARG, 0);
-            vmWriter.writePop(Segment.POINTER, 0); // this = argumento 0
+            vmWriter.writePop(Segment.POINTER, 0); 
         }
 
         parseStatements();
@@ -570,20 +550,18 @@ public class Parser {
     private void parseSubroutineDec() {
         xml.openTag("subroutineDec");
 
-        // >>> ADICIONADO: reseta labels e escopo de subrotina
         ifLabelNum = 0;
         whileLabelNum = 0;
         symbolTable.startSubroutine();
 
-        String subroutineType; // >>> ADICIONADO
+        String subroutineType; 
         if (checkKeyword("constructor") || checkKeyword("function") || checkKeyword("method")) {
-            subroutineType = peek().getLexeme(); // >>> ADICIONADO: "constructor", "function" ou "method"
+            subroutineType = peek().getLexeme(); 
             advanceAndWrite();
         } else {
             throw new RuntimeException("Esperado constructor, function ou method");
         }
 
-        // >>> ADICIONADO: método recebe 'this' como argumento implícito (índice 0)
         if (subroutineType.equals("method")) {
             symbolTable.define("this", className, Kind.ARG);
         }
@@ -595,13 +573,13 @@ public class Parser {
         }
 
         Token nameToken = consume(TokenType.IDENTIFIER, "Esperado nome da subrotina");
-        String functionName = className + "." + nameToken.getLexeme(); // >>> ADICIONADO
+        String functionName = className + "." + nameToken.getLexeme(); 
 
         consumeSymbol("(");
         parseParameterList();
         consumeSymbol(")");
 
-        parseSubroutineBody(functionName, subroutineType); // >>> ADICIONADO: passa parâmetros
+        parseSubroutineBody(functionName, subroutineType); 
 
         xml.closeTag("subroutineDec");
     }
@@ -612,7 +590,6 @@ public class Parser {
     private void parseClassVarDec() {
         xml.openTag("classVarDec");
 
-        // >>> ADICIONADO: captura kind (field ou static)
         String kindStr = peek().getLexeme();
         Kind kind = kindStr.equals("field") ? Kind.FIELD : Kind.STATIC;
 
@@ -622,18 +599,17 @@ public class Parser {
             throw new RuntimeException("Esperado 'static' ou 'field'");
         }
 
-        // >>> ADICIONADO: captura tipo
         Token typeToken = peek();
         parseType();
         String type = typeToken.getLexeme();
 
         Token nameToken = consume(TokenType.IDENTIFIER, "Esperado nome de variável");
-        symbolTable.define(nameToken.getLexeme(), type, kind); // >>> ADICIONADO
+        symbolTable.define(nameToken.getLexeme(), type, kind); 
 
         while (checkSymbol(",")) {
             consumeSymbol(",");
             Token nextName = consume(TokenType.IDENTIFIER, "Esperado nome de variável após ','");
-            symbolTable.define(nextName.getLexeme(), type, kind); // >>> ADICIONADO
+            symbolTable.define(nextName.getLexeme(), type, kind);
         }
 
         consumeSymbol(";");
@@ -645,7 +621,7 @@ public class Parser {
         consumeKeyword("class");
 
         Token classNameToken = consume(TokenType.IDENTIFIER, "Esperado nome da classe");
-        className = classNameToken.getLexeme(); // >>> ADICIONADO: guarda nome da classe
+        className = classNameToken.getLexeme(); 
 
         consumeSymbol("{");
 
