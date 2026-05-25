@@ -82,7 +82,7 @@ public class Main {
         Path vmFile = jackFile.getParent().resolve(vmFileName);
 
         Files.writeString(vmFile, parser.getVMOutput());
-        System.out.println("Compilado: " + jackFile.getFileName() + " → " + vmFileName);
+        System.out.println("Compilado: " + jackFile.getFileName() + " -> " + vmFileName);
     }
 
     private static void gerarXml(String inputPath, String outputPath) throws Exception {
